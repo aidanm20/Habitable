@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./src/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bahianita&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <title>habitable</title>
+  </head>
+  <body>
+    <section id="coverScroll" aria-label="Cover scene">
+      <div id="coverScene">
+        <div id="coverBackBack"></div>
+      </div>
+    </section>
+    <div id="connectBg" class="bg-layer"></div>
+    <div id="learnBg" class="bg-layer"></div>
+    <div id="storyBg" class="bg-layer"></div>
+    <div id="hubOverlay">
+      <p class="hub-note hub-note-top">Hover over text to see details.<br>Click to enter.</p>
+      <div class="hub-item hub-connect-item">
+        <p class="hub-label hub-connect">Connect</p>
+        <p class="hub-detail hub-connect-detail">Here you will find a quiz that will match you with a nonprofit to help with housing.</p>
+      </div>
+      <p class="hub-label hub-learn">Learn</p>
+      <p class="hub-label hub-play">Play</p>
+      <p class="hub-label hub-forum">Forum</p>
+      <p class="hub-label hub-story">Story &amp; About Us</p>
+    </div>
+    <div id="connectOverlay">
+      <button id="connectBack" type="button" aria-label="Back to hub">&#8249;</button>
+    </div>
+    <div id="learnOverlay">
+      <button id="learnBack" type="button" aria-label="Back to hub">&#8249;</button>
+      <p class="hub-note learn-note-top">Click on book to learn about our resources</p>
+      <a
+        id="learnBookHotspot"
+        aria-label="Open book"
+        title="book"
+        target="_blank"
+        rel="noopener noreferrer"
+      ></a>
+    </div>
+    <div id="storyOverlay">
+      <button id="storyBack" type="button" aria-label="Back to hub">&#8249;</button>
+    </div>
+    <div id="introContent">
+      <svg class="title-svg" viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" aria-label="500 Acres">
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="20" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" class="draw-text animate-draw" filter="url(#glow)">Welcome to Habitable!</text>
+      </svg>
+      <button class="introButton">Start Exploring</button>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

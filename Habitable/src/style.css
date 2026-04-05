@@ -1,0 +1,376 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+}
+
+.bg-layer {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#introBg {
+    background-image: url('./assets/bg/introBG.png');
+    z-index: 0;
+}
+
+#hubBg {
+    background-image: url('./assets/bg/hubBG.png');
+    opacity: 0;
+    z-index: 1;
+}
+
+#connectBg {
+    background-image: url('./assets/bg/connectBG.png');
+    opacity: 0;
+    z-index: 1;
+}
+
+#learnBg {
+    background-image: url('./assets/bg/2.jpg');
+    opacity: 0;
+    z-index: 1;
+}
+
+#storyBg {
+    background-image: url('./assets/bg/5.jpg');
+    opacity: 0;
+    z-index: 1;
+}
+
+#coverScroll {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 0;
+}
+
+#coverScene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: 1;
+    background: #050814;
+}
+
+#hubOverlay {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+#connectOverlay,
+#learnOverlay {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+#storyOverlay {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+#learnBookHotspot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    background: rgba(128, 128, 128, 0);
+    box-shadow: 0 0 0 rgba(128, 128, 128, 0);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+#learnBookHotspot:hover,
+#learnBookHotspot:focus-visible {
+    background: rgba(128, 128, 128, 0.22);
+    box-shadow: 0 0 24px 10px rgba(128, 128, 128, 0.18);
+}
+
+#introContent {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    z-index: 3;
+}
+
+#storyBack,
+#connectBack,
+#learnBack {
+    position: absolute;
+    top: 4%;
+    left: 3%;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.95);
+    font-family: "Bahianita", sans-serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    line-height: 1;
+    cursor: pointer;
+    text-shadow:
+        0 0 10px rgba(255, 255, 255, 0.55),
+        0 0 22px rgba(255, 255, 255, 0.22);
+    transition: transform 0.2s ease, text-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+#connectBack:hover,
+#storyBack:hover,
+#learnBack:hover {
+    transform: scale(1.08);
+    text-shadow:
+        0 0 14px rgba(255, 255, 255, 0.85),
+        0 0 28px rgba(255, 255, 255, 0.42);
+}
+
+.hub-note,
+.hub-label,
+.hub-detail {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.95);
+    font-family: "Bahianita", sans-serif;
+    font-weight: 400;
+    line-height: 1.05;
+    text-shadow:
+        0 0 10px rgba(255, 255, 255, 0.45),
+        0 0 20px rgba(255, 255, 255, 0.18);
+}
+
+.hub-item {
+    position: absolute;
+}
+
+.hub-note {
+    font-size: clamp(1.4rem, 2.2vw, 2.35rem);
+    text-align: center;
+    pointer-events: none;
+}
+
+.hub-label {
+    font-size: clamp(2rem, 3vw, 3.25rem);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 0.2s ease, text-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.hub-detail {
+    width: min(22rem, 26vw);
+    font-size: clamp(1.05rem, 1.5vw, 1.8rem);
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+    pointer-events: none;
+}
+
+.hub-note-top {
+    top: 2.5%;
+    left: 51%;
+    transform: translateX(-50%);
+}
+
+.learn-note-top {
+    top: 2.5%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.hub-connect-item {
+    top: 78.7%;
+    left: 10.42%;
+}
+
+.hub-connect {
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%) rotate(-25deg);
+}
+
+.hub-connect-detail {
+    top: 0.9rem;
+    left: 0.9rem;
+}
+
+.hub-item:hover .hub-detail {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.25s ease, visibility 0s linear 0s;
+}
+
+.hub-item:hover .hub-label,
+.hub-label:hover {
+    text-shadow:
+        0 0 14px rgba(255, 255, 255, 0.85),
+        0 0 28px rgba(255, 255, 255, 0.42);
+}
+
+.hub-learn:hover,
+.hub-play:hover,
+.hub-forum:hover {
+    transform: translate(-50%, -50%) scale(1.06);
+}
+
+.hub-connect-item:hover .hub-connect {
+    transform: translate(-50%, -50%) rotate(-25deg) scale(1.06);
+}
+
+.hub-story:hover {
+    transform: translate(-50%, -50%) rotate(19deg) scale(1.06);
+}
+
+.hub-learn {
+    top: 75.46%;
+    left: 69.74%;
+    transform: translate(-50%, -50%);
+}
+
+.hub-play {
+    top: 64.17%;
+    left: 44.79%;
+    transform: translate(-50%, -50%);
+}
+
+.hub-forum {
+    top: 87.04%;
+    left: 38.54%;
+    transform: translate(-50%, -50%);
+}
+
+.hub-story {
+    top: 87.31%;
+    left: 84.79%;
+    transform: translate(-50%, -50%) rotate(19deg);
+}
+
+.title-svg {
+    width: min(90vw, 900px);
+    aspect-ratio: 10 / 3;
+    overflow: visible;
+}
+
+.draw-text {
+    font-family: "Bahianita", sans-serif;
+    font-size: 180px;
+    fill: transparent;
+    stroke: #F4C867;
+    opacity: .9;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1800;
+    stroke-dashoffset: 1800;
+    paint-order: stroke fill;
+}
+
+.draw-text.animate-draw {
+    animation: draw 5s ease forwards, fillIn 0.7s ease 2.1s forwards;
+}
+
+@keyframes draw {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes fillIn {
+    100% {
+        fill: #F4C867;
+        opacity: .9 ;
+    }
+}
+
+.introButton {
+  background-color: transparent;
+  font-family: "Bahianita", sans-serif;
+  border: #F4C867 2px solid;
+  color: #F4C867;
+  opacity: .9;
+  padding: 10px 28px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -40px;
+  font-size: 26px;
+  cursor: pointer;
+  text-shadow: 0 0 10px rgba(244, 200, 103, 0.75);
+  box-shadow:
+    0 0 12px rgba(244, 200, 103, 0.35),
+    inset 0 0 10px rgba(244, 200, 103, 0.18);
+    transition: all 0.5s ease;
+}
+ 
+.introButton:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 900px) {
+    .hub-connect-detail {
+        width: min(18rem, 42vw);
+    }
+}
+
+@media (max-width: 640px) {
+    .hub-connect-detail {
+        width: min(15rem, 52vw);
+    }
+}
+
+#coverBackBack {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#coverBackBack svg {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    display: block;
+    max-width: none;
+    transform: translateX(-50%);
+    will-change: width, height;
+}
