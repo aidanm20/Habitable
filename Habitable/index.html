@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./src/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bahianita&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bahianita&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
     <title>habitable</title>
   </head>
   <body>
@@ -20,10 +23,12 @@
     <div id="learnBg" class="bg-layer"></div>
     <div id="storyBg" class="bg-layer"></div>
     <div id="hubOverlay">
-      <p class="hub-note hub-note-top">Hover over text to see details.<br>Click to enter.</p>
+      <p class="hub-note hub-note-top">Hover over text to see details.<br />Click to enter.</p>
       <div class="hub-item hub-connect-item">
         <p class="hub-label hub-connect">Connect</p>
-        <p class="hub-detail hub-connect-detail">Here you will find a quiz that will match you with a nonprofit to help with housing.</p>
+        <p class="hub-detail hub-connect-detail">
+          Here you will find a quiz that will match you with a nonprofit to help with housing.
+        </p>
       </div>
       <p class="hub-label hub-learn">Learn</p>
       <p class="hub-label hub-play">Play</p>
@@ -38,6 +43,7 @@
       <p class="hub-note learn-note-top">Click on book to learn about our resources</p>
       <a
         id="learnBookHotspot"
+        class="bg-hotspot"
         aria-label="Open book"
         title="book"
         target="_blank"
@@ -46,21 +52,55 @@
     </div>
     <div id="storyOverlay">
       <button id="storyBack" type="button" aria-label="Back to hub">&#8249;</button>
+      <a
+        id="storyHotspot"
+        class="bg-hotspot"
+        aria-label="Open Story"
+        title="Story"
+        target="_blank"
+        rel="noopener noreferrer"
+      ></a>
+      <a
+        id="aboutHotspot"
+        class="bg-hotspot"
+        aria-label="Open About Us"
+        title="About Us"
+        target="_blank"
+        rel="noopener noreferrer"
+      ></a>
     </div>
     <div id="introContent">
       <svg class="title-svg" viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" aria-label="500 Acres">
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="20" result="coloredBlur"/>
+            <feGaussianBlur stdDeviation="20" result="coloredBlur" />
             <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
         </defs>
-        <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" class="draw-text animate-draw" filter="url(#glow)">Welcome to Habitable!</text>
+        <text
+          x="50%"
+          y="50%"
+          text-anchor="middle"
+          dominant-baseline="middle"
+          class="draw-text animate-draw"
+          filter="url(#glow)"
+        >
+          Welcome to Habitable!
+        </text>
       </svg>
       <button class="introButton">Start Exploring</button>
+    </div>
+    <div id="bookModal" class="book-modal" aria-hidden="true">
+      <div id="bookModalBackdrop" class="book-modal-backdrop"></div>
+      <div class="book-modal-panel" role="dialog" aria-modal="true" aria-label="Housing resources book">
+        <button id="bookModalClose" class="book-modal-close" type="button" aria-label="Close book">
+          &times;
+        </button>
+        <div id="bookContainer" class="book-container"></div>
+      </div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

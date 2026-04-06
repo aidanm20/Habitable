@@ -1,9 +1,8 @@
 import "./style.css";
 import { gsap } from "gsap";
 import { setupCoverParallax } from "./app.js";
-import learnBgImageUrl from "./assets/bg/2.jpg?url";
 
-const LEARN_BG_SOURCE_SIZE = {
+const BG_SOURCE_SIZE = {
     width: 2360,
     height: 1640,
 };
@@ -14,6 +13,100 @@ const LEARN_BOOK_AREA = {
     width: 1500 - 325,
     height: 1530 - 690,
 };
+
+const STORY_AREA = {
+    left: 215,
+    top: 357,
+    width: 773 - 215,
+    height: 628 - 357,
+};
+
+const ABOUT_AREA = {
+    left: 223,
+    top: 634,
+    width: 932 - 223,
+    height: 841 - 634,
+};
+
+const BOOK_PAGES = [
+    {
+        title: "First Time Homebuyer Guide",
+        description:
+            "A comprehensive guide to understanding mortgages, down payments, and the home buying process, written with Gen Z in mind.",
+        linkLabel: "Open Resource",
+        linkUrl: "https://www.consumerfinance.gov/owning-a-home/",
+    },
+    {
+        title: "Habitable: The New Science of Housing",
+        description:
+            "A foundational white paper exploring how underutilized land near national parks can be transformed into workforce housing through digital fabrication, training programs, and investment strategies.",
+        linkLabel: "Read White Paper",
+        linkUrl: "https://www.habitable.us/about/white-paper",
+    },
+    {
+        title: "Community Land Trusts Explained",
+        description:
+            "Learn how community land trusts keep housing permanently affordable by separating land ownership from the homes built on it.",
+        linkLabel: "Learn More",
+        linkUrl: "https://groundedsolutions.org/strengthening-neighborhoods/community-land-trusts",
+    },
+    {
+        title: "Know Your Tenant Rights",
+        description:
+            "A state-by-state overview of tenant protections, eviction procedures, and how to advocate for yourself as a renter.",
+        linkLabel: "View Rights",
+        linkUrl: "https://www.hud.gov/topics/rental_assistance",
+    },
+    {
+        title: "Housing Policy 101",
+        description:
+            "Understand zoning, affordable housing policy, and how young people can influence decisions that shape their communities.",
+        linkLabel: "Explore Policy",
+        linkUrl: "https://www.nlihc.org/explore-issues",
+    },
+    {
+        title: "Budgeting for Housing",
+        description:
+            "Practical strategies for saving toward housing while managing student debt, gig income, and rising living costs.",
+        linkLabel: "Start Budgeting",
+        linkUrl: "https://www.nerdwallet.com/article/finance/how-to-budget",
+    },
+    {
+        title: "Building Third Places",
+        description:
+            "Learn how to create community gathering spaces, from gardens to maker workshops, that foster belonging in rural areas.",
+        linkLabel: "Explore Ideas",
+        linkUrl: "https://www.ruralhome.org/our-initiatives/",
+    },
+    {
+        title: "Alternative Building Methods",
+        description:
+            "An introduction to cob, straw bale, and earthship construction, lowering costs while reconnecting housing with the land.",
+        linkLabel: "Learn Methods",
+        linkUrl: "https://www.buildnaturally.com/",
+    },
+    {
+        title: "Rural Housing Assistance",
+        description:
+            "A directory of USDA and state-level programs that help young people afford housing in rural areas.",
+        linkLabel: "View Programs",
+        linkUrl: "https://www.rd.usda.gov/programs-services/single-family-housing-programs",
+    },
+    {
+        title: "YIMBY Advocacy Toolkit",
+        description:
+            "Step-by-step guidance for attending city council meetings, writing public comments, and organizing around housing policy.",
+        linkLabel: "Take Action",
+        linkUrl: "https://yimbyaction.org/resources/",
+    },
+    {
+        title: "Tiny Homes & ADUs",
+        description:
+            "How tiny homes and accessory dwelling units are creating new, affordable pathways to home ownership and the challenges ahead.",
+        linkLabel: "Learn More",
+        linkUrl: "https://www.aarp.org/livable-communities/housing/info-2019/accessory-dwelling-units-702.html",
+    },
+];
 
 async function startTextDraw() {
     const text = document.querySelector(".draw-text");
@@ -29,7 +122,6 @@ async function startTextDraw() {
     text.style.strokeDasharray = `${length} ${length}`;
     text.style.strokeDashoffset = `${length}`;
 
-    // Force style flush so animation starts from hidden stroke.
     text.getBoundingClientRect();
     text.classList.add("animate-draw");
 }
@@ -57,41 +149,227 @@ const learnBack = document.querySelector("#learnBack");
 const learnBookHotspot = document.querySelector("#learnBookHotspot");
 const storyOverlay = document.querySelector("#storyOverlay");
 const storyBack = document.querySelector("#storyBack");
+const storyHotspot = document.querySelector("#storyHotspot");
+const aboutHotspot = document.querySelector("#aboutHotspot");
+const bookModal = document.querySelector("#bookModal");
+const bookModalBackdrop = document.querySelector("#bookModalBackdrop");
+const bookModalClose = document.querySelector("#bookModalClose");
+const bookContainer = document.querySelector("#bookContainer");
 
-function positionLearnBookHotspot() {
-    if (!learnOverlay || !learnBookHotspot) {
+function positionHotspot(hotspot, area) {
+    if (!hotspot) {
         return;
     }
 
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const scale = Math.max(
-        viewportWidth / LEARN_BG_SOURCE_SIZE.width,
-        viewportHeight / LEARN_BG_SOURCE_SIZE.height,
+        viewportWidth / BG_SOURCE_SIZE.width,
+        viewportHeight / BG_SOURCE_SIZE.height,
     );
 
-    const renderedWidth = LEARN_BG_SOURCE_SIZE.width * scale;
-    const renderedHeight = LEARN_BG_SOURCE_SIZE.height * scale;
+    const renderedWidth = BG_SOURCE_SIZE.width * scale;
+    const renderedHeight = BG_SOURCE_SIZE.height * scale;
     const offsetX = (viewportWidth - renderedWidth) / 2;
     const offsetY = (viewportHeight - renderedHeight) / 2;
 
-    learnBookHotspot.style.left = `${offsetX + (LEARN_BOOK_AREA.left * scale)}px`;
-    learnBookHotspot.style.top = `${offsetY + (LEARN_BOOK_AREA.top * scale)}px`;
-    learnBookHotspot.style.width = `${LEARN_BOOK_AREA.width * scale}px`;
-    learnBookHotspot.style.height = `${LEARN_BOOK_AREA.height * scale}px`;
+    hotspot.style.left = `${offsetX + (area.left * scale)}px`;
+    hotspot.style.top = `${offsetY + (area.top * scale)}px`;
+    hotspot.style.width = `${area.width * scale}px`;
+    hotspot.style.height = `${area.height * scale}px`;
+}
+
+function positionMappedHotspots() {
+    positionHotspot(learnBookHotspot, LEARN_BOOK_AREA);
+    positionHotspot(storyHotspot, STORY_AREA);
+    positionHotspot(aboutHotspot, ABOUT_AREA);
+}
+
+function getPageHTML(pageData, pageNumber) {
+    if (!pageData) {
+        return `<div class="book-page-inner empty"></div>`;
+    }
+
+    return `
+        <div class="book-page-inner">
+            <div class="book-page-number">${pageNumber}</div>
+            <h2>${pageData.title}</h2>
+            <p>${pageData.description}</p>
+            <a class="book-page-link" href="${pageData.linkUrl}" target="_blank" rel="noopener noreferrer">
+                ${pageData.linkLabel} &rarr;
+            </a>
+        </div>
+    `;
+}
+
+let bookInitialized = false;
+
+function openBookModal() {
+    if (!bookModal) {
+        return;
+    }
+
+    bookModal.classList.add("is-open");
+    bookModal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("book-modal-open");
+
+    if (!bookInitialized) {
+        initBook();
+        bookInitialized = true;
+    }
+}
+
+function closeBookModal() {
+    if (!bookModal) {
+        return;
+    }
+
+    bookModal.classList.remove("is-open");
+    bookModal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("book-modal-open");
+}
+
+function initBook() {
+    if (!bookContainer) {
+        return;
+    }
+
+    let spreadIndex = 0;
+    let isAnimating = false;
+
+    bookContainer.innerHTML = `
+        <div class="resource-book">
+            <button class="book-nav book-prev" type="button" aria-label="Previous pages">&lsaquo;</button>
+            <div class="book-spread">
+                <article class="book-page book-page-left"></article>
+                <article class="book-page book-page-right"></article>
+                <div class="book-flip-layer" id="flipLayer"></div>
+            </div>
+            <button class="book-nav book-next" type="button" aria-label="Next pages">&rsaquo;</button>
+        </div>
+    `;
+
+    const book = bookContainer.querySelector(".book-spread");
+    const leftPage = bookContainer.querySelector(".book-page-left");
+    const rightPage = bookContainer.querySelector(".book-page-right");
+    const prevBtn = bookContainer.querySelector(".book-prev");
+    const nextBtn = bookContainer.querySelector(".book-next");
+    const flipLayer = bookContainer.querySelector("#flipLayer");
+
+    function renderPage(pageEl, pageData, pageNumber) {
+        pageEl.innerHTML = getPageHTML(pageData, pageNumber);
+    }
+
+    function renderSpread() {
+        renderPage(leftPage, BOOK_PAGES[spreadIndex], spreadIndex + 1);
+        renderPage(rightPage, BOOK_PAGES[spreadIndex + 1], spreadIndex + 2);
+        prevBtn.disabled = spreadIndex === 0;
+        nextBtn.disabled = spreadIndex + 2 >= BOOK_PAGES.length;
+    }
+
+    function animateForward() {
+        if (isAnimating || spreadIndex + 2 >= BOOK_PAGES.length) {
+            return;
+        }
+
+        isAnimating = true;
+        flipLayer.innerHTML = rightPage.innerHTML;
+        flipLayer.classList.add("is-active", "forward");
+
+        leftPage.innerHTML = getPageHTML(BOOK_PAGES[spreadIndex + 2], spreadIndex + 3);
+
+        gsap.timeline({
+            onStart: () => {
+                book.classList.add("is-turning");
+            },
+            onComplete: () => {
+                spreadIndex += 2;
+                rightPage.innerHTML = getPageHTML(BOOK_PAGES[spreadIndex + 1], spreadIndex + 2);
+                flipLayer.classList.remove("is-active", "forward");
+                flipLayer.innerHTML = "";
+                book.classList.remove("is-turning");
+                isAnimating = false;
+                renderSpread();
+            },
+        })
+            .to(book, { rotationY: -8, duration: 0.25 }, 0)
+            .to(flipLayer, {
+                rotationY: -180,
+                duration: 0.8,
+                ease: "power2.inOut",
+            }, 0)
+            .to(book, { rotationY: 0, duration: 0.4 }, 0.6);
+    }
+
+    function animateBackward() {
+        if (isAnimating || spreadIndex === 0) {
+            return;
+        }
+
+        isAnimating = true;
+        flipLayer.innerHTML = leftPage.innerHTML;
+        flipLayer.classList.add("is-active", "backward");
+
+        rightPage.innerHTML = getPageHTML(BOOK_PAGES[spreadIndex - 1], spreadIndex);
+
+        gsap.timeline({
+            onStart: () => {
+                book.classList.add("is-turning");
+            },
+            onComplete: () => {
+                spreadIndex -= 2;
+                leftPage.innerHTML = getPageHTML(BOOK_PAGES[spreadIndex], spreadIndex + 1);
+                flipLayer.classList.remove("is-active", "backward");
+                flipLayer.innerHTML = "";
+                book.classList.remove("is-turning");
+                isAnimating = false;
+                renderSpread();
+            },
+        })
+            .to(book, { rotationY: 8, duration: 0.25 }, 0)
+            .to(flipLayer, {
+                rotationY: 180,
+                duration: 0.8,
+                ease: "power2.inOut",
+            }, 0)
+            .to(book, { rotationY: 0, duration: 0.4 }, 0.6);
+    }
+
+    nextBtn.addEventListener("click", animateForward);
+    prevBtn.addEventListener("click", animateBackward);
+    renderSpread();
 }
 
 if (learnBookHotspot) {
-    learnBookHotspot.href = learnBgImageUrl;
-    positionLearnBookHotspot();
-    window.addEventListener("resize", positionLearnBookHotspot);
+    learnBookHotspot.setAttribute("href", "#");
+    learnBookHotspot.addEventListener("click", (event) => {
+        event.preventDefault();
+        openBookModal();
+    });
 }
+
+storyHotspot?.setAttribute("href", "https://www.habitable.us/stories");
+aboutHotspot?.setAttribute("href", "https://www.habitable.us/about/team");
+
+positionMappedHotspots();
+window.addEventListener("resize", positionMappedHotspots);
+
+bookModalBackdrop?.addEventListener("click", closeBookModal);
+bookModalClose?.addEventListener("click", closeBookModal);
+
+window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        closeBookModal();
+    }
+});
 
 const tl = gsap.timeline({
     paused: true,
     defaults: { duration: 1.2, ease: "power2.inOut" },
     onComplete: () => {
-        introContent.style.display = "none";
+        if (introContent) {
+            introContent.style.display = "none";
+        }
     },
 });
 
@@ -103,10 +381,14 @@ const connectInTl = gsap.timeline({
     paused: true,
     defaults: { duration: 0.9, ease: "power2.inOut" },
     onStart: () => {
-        hubOverlay.style.pointerEvents = "none";
+        if (hubOverlay) {
+            hubOverlay.style.pointerEvents = "none";
+        }
     },
     onComplete: () => {
-        connectOverlay.style.pointerEvents = "auto";
+        if (connectOverlay) {
+            connectOverlay.style.pointerEvents = "auto";
+        }
     },
 });
 
@@ -119,10 +401,14 @@ const connectOutTl = gsap.timeline({
     paused: true,
     defaults: { duration: 0.9, ease: "power2.inOut" },
     onStart: () => {
-        connectOverlay.style.pointerEvents = "none";
+        if (connectOverlay) {
+            connectOverlay.style.pointerEvents = "none";
+        }
     },
     onComplete: () => {
-        hubOverlay.style.pointerEvents = "auto";
+        if (hubOverlay) {
+            hubOverlay.style.pointerEvents = "auto";
+        }
     },
 });
 
@@ -135,10 +421,14 @@ const learnInTl = gsap.timeline({
     paused: true,
     defaults: { duration: 0.9, ease: "power2.inOut" },
     onStart: () => {
-        hubOverlay.style.pointerEvents = "none";
+        if (hubOverlay) {
+            hubOverlay.style.pointerEvents = "none";
+        }
     },
     onComplete: () => {
-        learnOverlay.style.pointerEvents = "auto";
+        if (learnOverlay) {
+            learnOverlay.style.pointerEvents = "auto";
+        }
     },
 });
 
@@ -151,10 +441,14 @@ const learnOutTl = gsap.timeline({
     paused: true,
     defaults: { duration: 0.9, ease: "power2.inOut" },
     onStart: () => {
-        learnOverlay.style.pointerEvents = "none";
+        if (learnOverlay) {
+            learnOverlay.style.pointerEvents = "none";
+        }
     },
     onComplete: () => {
-        hubOverlay.style.pointerEvents = "auto";
+        if (hubOverlay) {
+            hubOverlay.style.pointerEvents = "auto";
+        }
     },
 });
 
@@ -167,10 +461,14 @@ const storyInTl = gsap.timeline({
     paused: true,
     defaults: { duration: 0.9, ease: "power2.inOut" },
     onStart: () => {
-        hubOverlay.style.pointerEvents = "none";
+        if (hubOverlay) {
+            hubOverlay.style.pointerEvents = "none";
+        }
     },
     onComplete: () => {
-        storyOverlay.style.pointerEvents = "auto";
+        if (storyOverlay) {
+            storyOverlay.style.pointerEvents = "auto";
+        }
     },
 });
 
@@ -183,10 +481,14 @@ const storyOutTl = gsap.timeline({
     paused: true,
     defaults: { duration: 0.9, ease: "power2.inOut" },
     onStart: () => {
-        storyOverlay.style.pointerEvents = "none";
+        if (storyOverlay) {
+            storyOverlay.style.pointerEvents = "none";
+        }
     },
     onComplete: () => {
-        hubOverlay.style.pointerEvents = "auto";
+        if (hubOverlay) {
+            hubOverlay.style.pointerEvents = "auto";
+        }
     },
 });
 
@@ -196,14 +498,17 @@ storyOutTl
     .to(hubOverlay, { opacity: 1 }, 0.1);
 
 function fade() {
-    introButton.disabled = true;
+    if (introButton) {
+        introButton.disabled = true;
+    }
+
     tl.restart();
 }
 
-introButton.addEventListener("click", fade);
-connectTrigger.addEventListener("click", () => connectInTl.restart());
-connectBack.addEventListener("click", () => connectOutTl.restart());
-learnTrigger.addEventListener("click", () => learnInTl.restart());
-learnBack.addEventListener("click", () => learnOutTl.restart());
-storyTrigger.addEventListener("click", () => storyInTl.restart());
-storyBack.addEventListener("click", () => storyOutTl.restart());
+introButton?.addEventListener("click", fade);
+connectTrigger?.addEventListener("click", () => connectInTl.restart());
+connectBack?.addEventListener("click", () => connectOutTl.restart());
+learnTrigger?.addEventListener("click", () => learnInTl.restart());
+learnBack?.addEventListener("click", () => learnOutTl.restart());
+storyTrigger?.addEventListener("click", () => storyInTl.restart());
+storyBack?.addEventListener("click", () => storyOutTl.restart());
