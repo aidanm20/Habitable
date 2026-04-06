@@ -1,3 +1,5 @@
+import { gsap } from "gsap";
+
 const THEME_COLORS = {
   Stay:   "#F0C867",
   Afford: "#82C4A8",
@@ -14,8 +16,44 @@ export async function initConnect() {
   const svg = document.getElementById("connectMap");
   const cardEl = document.getElementById("resourceCard");
   const closeBtn = document.getElementById("cardClose");
+  const filtersToggle = document.getElementById("filtersToggle");
+  const filtersDropdown = document.getElementById("filtersDropdown");
 
   if (!svg || !cardEl || !mapWrap) return;
+
+  // ── Dropdown toggle ────────────────────────────────────────
+  let dropdownOpen = false;
+  let dropdownTween = null;
+
+  if (filtersToggle && filtersDropdown) {
+    // Measure natural height once by briefly making it auto
+    filtersDropdown.style.height = "auto";
+    filtersDropdown.style.opacity = "1";
+    const naturalH = filtersDropdown.scrollHeight;
+    filtersDropdown.style.height = "0";
+    filtersDropdown.style.opacity = "0";
+
+    filtersToggle.addEventListener("click", () => {
+      if (dropdownTween) dropdownTween.kill();
+      if (dropdownOpen) {
+        dropdownOpen = false;
+        filtersToggle.setAttribute("aria-expanded", "false");
+        filtersDropdown.setAttribute("aria-hidden", "true");
+        dropdownTween = gsap.to(filtersDropdown, {
+          height: 0, opacity: 0, duration: 0.28, ease: "power2.in",
+          onComplete: () => filtersDropdown.classList.remove("is-open"),
+        });
+      } else {
+        dropdownOpen = true;
+        filtersToggle.setAttribute("aria-expanded", "true");
+        filtersDropdown.setAttribute("aria-hidden", "false");
+        filtersDropdown.classList.add("is-open");
+        dropdownTween = gsap.to(filtersDropdown, {
+          height: naturalH, opacity: 1, duration: 0.32, ease: "power2.out",
+        });
+      }
+    });
+  }
 
   const resources = await fetch("/resources.json").then((r) => r.json());
 
@@ -144,32 +182,37 @@ export async function initConnect() {
       activeFilters.geo.size === 0;
 
     svg.querySelectorAll(".node-group").forEach((g) => {
-      if (noFiltersActive) {
-        g.classList.remove("node-dimmed");
-        return;
-      }
-
       const id = g.getAttribute("data-id");
       const res = resources.find((r) => r.id === id);
       if (!res) return;
 
-      const identityOk =
-        activeFilters.identity.size === 0 ||
-        [...activeFilters.identity].some((v) =>
-          res.identityCommunity.map((s) => s.toLowerCase()).includes(v.toLowerCase())
-        );
-      const accessOk =
-        activeFilters.access.size === 0 ||
-        [...activeFilters.access].some((v) =>
-          res.accessMode.map((s) => s.toLowerCase()).includes(v.toLowerCase())
-        );
-      const geoOk =
-        activeFilters.geo.size === 0 ||
-        [...activeFilters.geo].some((v) =>
-          res.geography.map((s) => s.toLowerCase()).includes(v.toLowerCase())
-        );
+      let visible = true;
+      if (!noFiltersActive) {
+        const identityOk =
+          activeFilters.identity.size === 0 ||
+          [...activeFilters.identity].some((v) =>
+            res.identityCommunity.map((s) => s.toLowerCase()).includes(v.toLowerCase())
+          );
+        const accessOk =
+          activeFilters.access.size === 0 ||
+          [...activeFilters.access].some((v) =>
+            res.accessMode.map((s) => s.toLowerCase()).includes(v.toLowerCase())
+          );
+        const geoOk =
+          activeFilters.geo.size === 0 ||
+          [...activeFilters.geo].some((v) =>
+            res.geography.map((s) => s.toLowerCase()).includes(v.toLowerCase())
+          );
+        visible = identityOk && accessOk && geoOk;
+      }
 
-      g.classList.toggle("node-dimmed", !(identityOk && accessOk && geoOk));
+      if (visible) {
+        g.classList.remove("node-dimmed");
+        gsap.to(g, { opacity: 1, duration: 0.4, ease: "power1.out", overwrite: true });
+      } else {
+        g.classList.add("node-dimmed");
+        gsap.to(g, { opacity: 0, duration: 0.35, ease: "power1.in", overwrite: true });
+      }
     });
   }
 
@@ -234,7 +277,6 @@ export async function initConnect() {
       <div class="card-theme-dot" style="background:${color}"></div>
       <p class="card-theme-name" style="color:${color}">${resource.theme} · ${resource.stage}</p>
       <h2 class="card-name">${resource.name}</h2>
-      <p class="card-org">${resource.organization || ""}</p>
       <p class="card-desc">${resource.description || ""}</p>
       <div class="card-tags">${tags}</div>
       ${resource.eligibilityNotes ? `<p class="card-eligibility">${resource.eligibilityNotes}</p>` : ""}
@@ -280,13 +322,13 @@ function jitterPositions(resources) {
   return resources.map((res) => {
     let x = res.x;
     let y = res.y;
-    const THRESH = 2.5;
+    const THRESH = 4.5;
     const conflicts = placed.filter(
       (p) => Math.abs(p._x - x) < THRESH && Math.abs(p._y - y) < THRESH
     );
     if (conflicts.length > 0) {
       const angle = (conflicts.length * 137.5 * Math.PI) / 180;
-      const dist = 2.5 + conflicts.length * 1.2;
+      const dist = 4.5 + conflicts.length * 2.2;
       x = clamp(x + Math.cos(angle) * dist, 2, 97);
       y = clamp(y + Math.sin(angle) * dist, 2, 97);
     }

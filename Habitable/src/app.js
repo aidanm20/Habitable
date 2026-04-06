@@ -1,8 +1,10 @@
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import coverSvgUrl from "./assets/bg/coverSVG.svg?url";
 
-gsap.registerPlugin(ScrollTrigger);
+export const COVER_SOURCE_SIZE = {
+    width: 1920,
+    height: 2160,
+};
 
 const LAYER_DEPTHS = {
     coverBackback: { depth: 0, startOffset: 0 },
@@ -21,70 +23,145 @@ const LAYER_DEPTHS = {
     coverFrontGrass: { depth: 1, startOffset: 0.34 },
 };
 
-function getCoverMetrics(svg) {
-    const viewBox = svg.viewBox?.baseVal;
-    const sourceWidth = viewBox?.width || 1920;
-    const sourceHeight = viewBox?.height || 2160;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const scale = Math.max(viewportWidth / sourceWidth, viewportHeight / sourceHeight);
-    const renderedWidth = sourceWidth * scale;
-    const renderedHeight = sourceHeight * scale;
+const INTRO_ANCHOR_LAYER_ID = "coverBack";
 
+const coverLayoutSubscribers = new Set();
+
+let latestCoverMetrics = getCoverMetrics();
+
+function createFallbackController() {
     return {
-        renderedWidth,
-        renderedHeight,
-        travel: Math.max(0, renderedHeight - viewportHeight),
+        animateTo: () => null,
+        getProgress: () => 0,
+        setProgress: () => {},
+        destroy: () => {},
     };
 }
 
-function sizeCoverSvg(svg) {
-    const { renderedWidth, renderedHeight } = getCoverMetrics(svg);
+function getCoverViewport(container) {
+    const rect = container?.getBoundingClientRect();
+    if (!rect || (!rect.width && !rect.height)) {
+        return {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            left: 0,
+            top: 0,
+        };
+    }
+
+    return {
+        width: rect.width,
+        height: rect.height,
+        left: rect.left,
+        top: rect.top,
+    };
+}
+
+function getCoverMetrics(
+    viewportWidth = window.innerWidth,
+    viewportHeight = window.innerHeight,
+    viewportLeft = 0,
+    viewportTop = 0,
+) {
+    const scale = Math.max(
+        viewportWidth / COVER_SOURCE_SIZE.width,
+        viewportHeight / COVER_SOURCE_SIZE.height,
+    );
+    const renderedWidth = COVER_SOURCE_SIZE.width * scale;
+    const renderedHeight = COVER_SOURCE_SIZE.height * scale;
+
+    return {
+        scale,
+        renderedWidth,
+        renderedHeight,
+        travel: Math.max(0, renderedHeight - viewportHeight),
+        viewportWidth,
+        viewportHeight,
+        viewportLeft,
+        viewportTop,
+        offsetX: viewportLeft + ((viewportWidth - renderedWidth) / 2),
+        offsetY: viewportTop + viewportHeight - renderedHeight,
+    };
+}
+
+function getContainerCoverMetrics(container) {
+    const { width, height, left, top } = getCoverViewport(container);
+    return getCoverMetrics(width, height, left, top);
+}
+
+function getIntroAnchorSpread(metrics = latestCoverMetrics) {
+    const anchorLayer = LAYER_DEPTHS[INTRO_ANCHOR_LAYER_ID];
+    if (!anchorLayer) {
+        return 0;
+    }
+
+    return metrics.travel * (anchorLayer.startOffset + anchorLayer.depth);
+}
+
+function getRootY(progress, metrics = latestCoverMetrics) {
+    const introAnchorY = -getIntroAnchorSpread(metrics);
+    const finalY = -metrics.travel;
+    return gsap.utils.interpolate(introAnchorY, finalY, progress);
+}
+
+function emitCoverLayout(metrics) {
+    latestCoverMetrics = metrics;
+    coverLayoutSubscribers.forEach((callback) => callback(metrics));
+}
+
+export function subscribeToCoverLayout(callback) {
+    if (typeof callback !== "function") {
+        return () => {};
+    }
+
+    coverLayoutSubscribers.add(callback);
+    callback(latestCoverMetrics);
+
+    return () => {
+        coverLayoutSubscribers.delete(callback);
+    };
+}
+
+export function projectCoverPoint(sourceX, sourceY, progress = 1) {
+    const { scale, offsetX, viewportTop } = latestCoverMetrics;
+
+    return {
+        left: offsetX + (sourceX * scale),
+        top: viewportTop + (sourceY * scale) + getRootY(progress),
+    };
+}
+
+function sizeCoverSvg(svg, metrics = latestCoverMetrics) {
+    const { renderedWidth, renderedHeight } = metrics;
     svg.style.width = `${renderedWidth}px`;
     svg.style.height = `${renderedHeight}px`;
 }
 
-function buildParallaxTimeline(svg, layers) {
-    const { travel } = getCoverMetrics(svg);
-    const finalY = -travel;
-    const maxDepthOffset = travel * Math.max(...layers.map(({ depth }) => depth), 0);
-    let maxLayerDistance = travel;
+function getLayerStates(layers, metrics = latestCoverMetrics) {
+    const { travel } = metrics;
 
-    layers.forEach(({ element, depth, startOffset }) => {
-        const startY = finalY + travel + (travel * startOffset) + (maxDepthOffset * depth);
-        maxLayerDistance = Math.max(maxLayerDistance, startY - finalY);
+    return layers.map(({ element, depth, startOffset }) => ({
+        element,
+        spreadY: travel * (startOffset + depth),
+    }));
+}
 
+function applyProgress(svg, layerStates, progress, metrics = latestCoverMetrics) {
+    const rootY = getRootY(progress, metrics);
+
+    gsap.set(svg, { y: rootY });
+
+    layerStates.forEach(({ element, spreadY }) => {
         gsap.set(element, {
-            clearProps: "transform",
-            force3D: true,
-            transformOrigin: "50% 0%",
-            y: startY,
+            y: spreadY * (1 - progress),
         });
     });
-
-    const timeline = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-            trigger: "#coverScroll",
-            start: "top top",
-            end: `+=${Math.max(maxLayerDistance, window.innerHeight * 1.35)}`,
-            scrub: true,
-            pin: true,
-            invalidateOnRefresh: true,
-        },
-    });
-
-    layers.forEach(({ element }) => {
-        timeline.to(element, { y: finalY }, 0);
-    });
-
-    return timeline;
 }
 
 export async function setupCoverParallax(containerSelector = "#coverBackBack") {
     const container = document.querySelector(containerSelector);
     if (!container) {
-        return () => {};
+        return createFallbackController();
     }
 
     const response = await fetch(coverSvgUrl);
@@ -93,12 +170,19 @@ export async function setupCoverParallax(containerSelector = "#coverBackBack") {
 
     const svg = container.querySelector("svg");
     if (!svg) {
-        return () => {};
+        return createFallbackController();
     }
+
+    let metrics = getContainerCoverMetrics(container);
 
     svg.setAttribute("preserveAspectRatio", "xMidYMin slice");
     svg.setAttribute("aria-hidden", "true");
-    sizeCoverSvg(svg);
+    sizeCoverSvg(svg, metrics);
+    gsap.set(svg, {
+        xPercent: -50,
+        force3D: true,
+        transformOrigin: "50% 0%",
+    });
 
     const layers = Object.entries(LAYER_DEPTHS)
         .map(([id, config]) => ({
@@ -108,31 +192,87 @@ export async function setupCoverParallax(containerSelector = "#coverBackBack") {
         }))
         .filter(({ element }) => element);
 
-    let timeline = buildParallaxTimeline(svg, layers);
+    layers.forEach(({ element }) => {
+        gsap.set(element, {
+            clearProps: "transform",
+            force3D: true,
+            transformOrigin: "50% 0%",
+        });
+    });
+
+    const state = { progress: 0 };
+    let layerStates = getLayerStates(layers, metrics);
     let resizeFrame = 0;
+    let progressTween = null;
+    const resizeObserver =
+        typeof ResizeObserver === "function"
+            ? new ResizeObserver(() => {
+                handleResize();
+            })
+            : null;
+
+    applyProgress(svg, layerStates, state.progress, metrics);
+    emitCoverLayout(metrics);
 
     const rebuild = () => {
-        timeline.scrollTrigger?.kill();
-        timeline.kill();
-        sizeCoverSvg(svg);
-        timeline = buildParallaxTimeline(svg, layers);
+        metrics = getContainerCoverMetrics(container);
+        sizeCoverSvg(svg, metrics);
+        layerStates = getLayerStates(layers, metrics);
+        applyProgress(svg, layerStates, state.progress, metrics);
+        emitCoverLayout(metrics);
     };
 
     const handleResize = () => {
         cancelAnimationFrame(resizeFrame);
-        resizeFrame = window.requestAnimationFrame(() => {
-            rebuild();
-            ScrollTrigger.refresh();
-        });
+        resizeFrame = window.requestAnimationFrame(rebuild);
     };
 
     window.addEventListener("resize", handleResize);
+    resizeObserver?.observe(container);
 
-    return () => {
-        cancelAnimationFrame(resizeFrame);
-        window.removeEventListener("resize", handleResize);
-        timeline.scrollTrigger?.kill();
-        timeline.kill();
-        container.innerHTML = "";
+    return {
+        animateTo(targetProgress, vars = {}) {
+            const {
+                duration = 1,
+                ease = "power2.inOut",
+                onComplete,
+                onStart,
+                onUpdate,
+            } = vars;
+
+            progressTween?.kill();
+            progressTween = gsap.to(state, {
+                progress: gsap.utils.clamp(0, 1, targetProgress),
+                duration,
+                ease,
+                onStart,
+                onUpdate: () => {
+                    applyProgress(svg, layerStates, state.progress, metrics);
+                    onUpdate?.(state.progress);
+                },
+                onComplete: () => {
+                    progressTween = null;
+                    onComplete?.();
+                },
+            });
+
+            return progressTween;
+        },
+        getProgress() {
+            return state.progress;
+        },
+        setProgress(progress) {
+            progressTween?.kill();
+            progressTween = null;
+            state.progress = gsap.utils.clamp(0, 1, progress);
+            applyProgress(svg, layerStates, state.progress, metrics);
+        },
+        destroy() {
+            progressTween?.kill();
+            cancelAnimationFrame(resizeFrame);
+            window.removeEventListener("resize", handleResize);
+            resizeObserver?.disconnect();
+            container.innerHTML = "";
+        },
     };
 }

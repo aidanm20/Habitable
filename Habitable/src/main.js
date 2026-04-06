@@ -1,11 +1,44 @@
 import "./style.css";
 import { gsap } from "gsap";
-import { setupCoverParallax } from "./app.js";
+import { projectCoverPoint, setupCoverParallax, subscribeToCoverLayout } from "./app.js";
 import { initConnect } from "./connect.js";
+
 const BG_SOURCE_SIZE = {
     width: 2360,
     height: 1640,
 };
+
+function createAreaFromMapCoords(x1, y1, x2, y2) {
+    const left = Math.min(x1, x2);
+    const top = Math.min(y1, y2);
+    const right = Math.max(x1, x2);
+    const bottom = Math.max(y1, y2);
+
+    return {
+        left,
+        top,
+        width: right - left,
+        height: bottom - top,
+    };
+}
+
+const HUB_LABEL_AREAS = {
+    connect: createAreaFromMapCoords(149, 1709, 499, 1994),
+    forum: createAreaFromMapCoords(600, 1757, 984, 2018),
+    play: createAreaFromMapCoords(695, 1328, 1131, 1682),
+    learn: createAreaFromMapCoords(1594, 1759, 1277, 1558),
+    story: createAreaFromMapCoords(1569, 1803, 1805, 2019),
+};
+
+const HUB_LABEL_OFFSETS = {
+    connect: { x: 0, y: 0 },
+    forum: { x: 0, y: 0 },
+    play: { x: 0, y: 0 },
+    learn: { x: 0, y: 0 },
+    story: { x: 0, y: 0 },
+};
+
+const INTRO_PARALLAX_DURATION = 1.8;
 
 const LEARN_BOOK_AREA = {
     left: 325,
@@ -126,21 +159,21 @@ async function startTextDraw() {
     text.classList.add("animate-draw");
 }
 
-window.addEventListener("load", () => {
-    startTextDraw();
-});
-
-setupCoverParallax();
+const coverReady = setupCoverParallax();
 
 const introButton = document.querySelector(".introButton");
 const introContent = document.querySelector("#introContent");
-const hubBg = document.querySelector("#coverScene");
 const hubOverlay = document.querySelector("#hubOverlay");
+const hubNoteTop = document.querySelector(".hub-note-top");
 const connectBg = document.querySelector("#connectBg");
 const learnBg = document.querySelector("#learnBg");
 const storyBg = document.querySelector("#storyBg");
+const connectItem = document.querySelector(".hub-connect-item");
+const learnItem = document.querySelector(".hub-learn-item");
 const connectTrigger = document.querySelector(".hub-connect");
 const learnTrigger = document.querySelector(".hub-learn");
+const playTrigger = document.querySelector(".hub-play");
+const forumTrigger = document.querySelector(".hub-forum");
 const storyTrigger = document.querySelector(".hub-story");
 const connectOverlay = document.querySelector("#connectOverlay");
 const connectBack = document.querySelector("#connectBack");
@@ -155,6 +188,22 @@ const bookModal = document.querySelector("#bookModal");
 const bookModalBackdrop = document.querySelector("#bookModalBackdrop");
 const bookModalClose = document.querySelector("#bookModalClose");
 const bookContainer = document.querySelector("#bookContainer");
+
+function dismissHubNote() {
+    if (!hubNoteTop || hubNoteTop.classList.contains("is-dismissed")) {
+        return;
+    }
+
+    hubNoteTop.classList.add("is-dismissed");
+}
+
+function getHubSafeMargins() {
+    return {
+        x: Math.min(Math.max(window.innerWidth * 0.04, 16), 36),
+        top: Math.min(Math.max(window.innerHeight * 0.03, 16), 36),
+        bottom: Math.min(Math.max(window.innerHeight * 0.04, 16), 42),
+    };
+}
 
 function positionHotspot(hotspot, area) {
     if (!hotspot) {
@@ -183,6 +232,101 @@ function positionMappedHotspots() {
     positionHotspot(learnBookHotspot, LEARN_BOOK_AREA);
     positionHotspot(storyHotspot, STORY_AREA);
     positionHotspot(aboutHotspot, ABOUT_AREA);
+}
+
+function getHubLabelAnchorPoint(labelKey) {
+    const area = HUB_LABEL_AREAS[labelKey];
+    if (!area) {
+        return null;
+    }
+
+    const offset = HUB_LABEL_OFFSETS[labelKey] ?? { x: 0, y: 0 };
+
+    return {
+        x: area.left + (area.width / 2) + offset.x,
+        y: area.top + (area.height / 2) + offset.y,
+    };
+}
+
+function positionHubAnchor(element, labelKey) {
+    if (!element) {
+        return;
+    }
+
+    const point = getHubLabelAnchorPoint(labelKey);
+    if (!point) {
+        return;
+    }
+
+    const { left, top } = projectCoverPoint(point.x, point.y, 1);
+    element.style.left = `${left}px`;
+    element.style.top = `${top}px`;
+}
+
+function clampHubAnchor(element) {
+    if (!element) {
+        return;
+    }
+
+    const { x, top, bottom } = getHubSafeMargins();
+    const rect = element.getBoundingClientRect();
+    let deltaX = 0;
+    let deltaY = 0;
+
+    if (rect.left < x) {
+        deltaX = x - rect.left;
+    } else if (rect.right > (window.innerWidth - x)) {
+        deltaX = (window.innerWidth - x) - rect.right;
+    }
+
+    if (rect.top < top) {
+        deltaY = top - rect.top;
+    } else if (rect.bottom > (window.innerHeight - bottom)) {
+        deltaY = (window.innerHeight - bottom) - rect.bottom;
+    }
+
+    if (!deltaX && !deltaY) {
+        return;
+    }
+
+    const currentLeft = Number.parseFloat(element.style.left || "0");
+    const currentTop = Number.parseFloat(element.style.top || "0");
+
+    element.style.left = `${currentLeft + deltaX}px`;
+    element.style.top = `${currentTop + deltaY}px`;
+}
+
+function positionHubAnchors() {
+    const anchors = [
+        [connectItem, "connect"],
+        [learnItem, "learn"],
+        [playTrigger, "play"],
+        [forumTrigger, "forum"],
+        [storyTrigger, "story"],
+    ];
+
+    anchors.forEach(([element, labelKey]) => {
+        positionHubAnchor(element, labelKey);
+    });
+
+    anchors.forEach(([element]) => {
+        clampHubAnchor(element);
+    });
+}
+
+let layoutFrame = 0;
+
+function syncInteractiveLayout() {
+    positionMappedHotspots();
+    positionHubAnchors();
+}
+
+function scheduleInteractiveLayout() {
+    cancelAnimationFrame(layoutFrame);
+    layoutFrame = window.requestAnimationFrame(() => {
+        layoutFrame = 0;
+        syncInteractiveLayout();
+    });
 }
 
 function getPageHTML(pageData, pageNumber) {
@@ -315,7 +459,7 @@ function initBook() {
             renderPage(flipBack,  BOOK_PAGES[nextIdx + 1],     nextIdx + 2);
         }
 
-        gsap.set(flipPanel, { rotateY: 0 });
+        gsap.set(flipPanel, { clearProps: "transform" });
         flipPanel.classList.remove("flip-forward", "flip-backward", "is-flipping");
         flipPanel.classList.add(isForward ? "flip-forward" : "flip-backward", "is-flipping");
 
@@ -325,7 +469,7 @@ function initBook() {
         const tl = gsap.timeline({
             onComplete: () => {
                 flipPanel.classList.remove("is-flipping", "flip-forward", "flip-backward");
-                gsap.set(flipPanel, { rotateY: 0 });
+                gsap.set(flipPanel, { clearProps: "transform" });
                 gsap.set([shadowL, shadowR], { opacity: 0 });
                 isAnimating = false;
                 renderSpread();
@@ -380,8 +524,21 @@ if (learnBookHotspot) {
 storyHotspot?.setAttribute("href", "https://www.habitable.us/stories");
 aboutHotspot?.setAttribute("href", "https://www.habitable.us/about/team");
 
-positionMappedHotspots();
-window.addEventListener("resize", positionMappedHotspots);
+[connectItem, learnItem, playTrigger, forumTrigger, storyTrigger].forEach((target) => {
+    target?.addEventListener("pointerenter", dismissHubNote, { once: true });
+});
+
+scheduleInteractiveLayout();
+window.addEventListener("resize", scheduleInteractiveLayout);
+subscribeToCoverLayout(() => {
+    scheduleInteractiveLayout();
+});
+
+if (document.fonts?.ready) {
+    document.fonts.ready.then(() => {
+        scheduleInteractiveLayout();
+    });
+}
 
 bookModalBackdrop?.addEventListener("click", closeBookModal);
 bookModalClose?.addEventListener("click", closeBookModal);
@@ -391,20 +548,6 @@ window.addEventListener("keydown", (event) => {
         closeBookModal();
     }
 });
-
-const tl = gsap.timeline({
-    paused: true,
-    defaults: { duration: 1.2, ease: "power2.inOut" },
-    onComplete: () => {
-        if (introContent) {
-            introContent.style.display = "none";
-        }
-    },
-});
-
-tl.to(hubBg, { opacity: 1 }, 0)
-    .to(hubOverlay, { opacity: 1 }, 0.2)
-    .to(introContent, { opacity: 0 }, 0);
 
 const connectInTl = gsap.timeline({
     paused: true,
@@ -526,12 +669,42 @@ storyOutTl
     .to(storyBg, { opacity: 0 }, 0)
     .to(hubOverlay, { opacity: 1 }, 0.1);
 
-function fade() {
+async function fade() {
     if (introButton) {
         introButton.disabled = true;
     }
 
-    tl.restart();
+    const coverController = await coverReady;
+
+    if (hubOverlay) {
+        hubOverlay.style.pointerEvents = "none";
+        hubOverlay.style.opacity = "0";
+    }
+
+    coverController.animateTo(1, {
+        duration: INTRO_PARALLAX_DURATION,
+        ease: "power2.inOut",
+        onComplete: () => {
+            if (hubOverlay) {
+                hubOverlay.style.opacity = "1";
+                hubOverlay.style.pointerEvents = "auto";
+            }
+
+            scheduleInteractiveLayout();
+        },
+    });
+
+    if (introContent) {
+        gsap.killTweensOf(introContent);
+        gsap.to(introContent, {
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.out",
+            onComplete: () => {
+                introContent.style.display = "none";
+            },
+        });
+    }
 }
 
 introButton?.addEventListener("click", fade);

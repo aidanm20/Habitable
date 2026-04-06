@@ -4,37 +4,38 @@
     box-sizing: border-box;
 }
 
+html,
 body {
     min-height: 100vh;
+    min-height: 100svh;
     min-height: 100dvh;
     overflow-x: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none;
 }
 
 body.book-modal-open {
     overflow: hidden;
 }
 
+:root {
+    --overlay-back-top: 4%;
+    --overlay-back-left: 3%;
+    --overlay-back-size: clamp(3rem, 5vw, 5.5rem);
+    --overlay-back-clearance: clamp(4.5rem, 8vw, 7rem);
+}
+
 .bg-layer {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
     position: fixed;
-    left: 0;
-    top: 0;
+    inset: 0;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-}
-
-#introBg {
-    background-image: url('./assets/bg/introBG.png');
-    z-index: 0;
-}
-
-#hubBg {
-    background-image: url('./assets/bg/hubBG.png');
-    opacity: 0;
-    z-index: 1;
 }
 
 #connectBg {
@@ -59,6 +60,7 @@ body.book-modal-open {
     position: relative;
     width: 100%;
     height: 100vh;
+    height: 100svh;
     height: 100dvh;
     z-index: 0;
 }
@@ -72,37 +74,26 @@ body.book-modal-open {
 }
 
 #hubOverlay {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
     position: fixed;
-    left: 0;
-    top: 0;
+    inset: 0;
     opacity: 0;
     z-index: 2;
-    pointer-events: auto;
+    pointer-events: none;
+    overflow: hidden;
 }
 
 #connectOverlay,
 #learnOverlay {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
     position: fixed;
-    left: 0;
-    top: 0;
+    inset: 0;
     opacity: 0;
     z-index: 2;
     pointer-events: none;
 }
 
 #storyOverlay {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
     position: fixed;
-    left: 0;
-    top: 0;
+    inset: 0;
     opacity: 0;
     z-index: 2;
     pointer-events: none;
@@ -126,12 +117,8 @@ body.book-modal-open {
 }
 
 #introContent {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
     position: fixed;
-    left: 0;
-    top: 0;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -144,15 +131,16 @@ body.book-modal-open {
 #connectBack,
 #learnBack {
     position: absolute;
-    top: 4%;
-    left: 3%;
+    top: var(--overlay-back-top);
+    left: var(--overlay-back-left);
     border: 0;
     background: transparent;
     color: rgba(255, 255, 255, 0.95);
     font-family: "Bahianita", sans-serif;
-    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-size: var(--overlay-back-size);
     line-height: 1;
     cursor: pointer;
+    z-index: 30;
     text-shadow:
         0 0 10px rgba(255, 255, 255, 0.55),
         0 0 22px rgba(255, 255, 255, 0.22);
@@ -186,6 +174,7 @@ body.book-modal-open {
 }
 
 .hub-note {
+    width: min(90vw, 30rem);
     font-size: clamp(1.4rem, 2.2vw, 2.35rem);
     text-align: center;
     pointer-events: none;
@@ -193,6 +182,8 @@ body.book-modal-open {
 
 .hub-label {
     font-size: clamp(2rem, 3vw, 3.25rem);
+    max-width: min(88vw, 20rem);
+    text-align: center;
     white-space: nowrap;
     cursor: pointer;
     transition: transform 0.2s ease, text-shadow 0.2s ease, opacity 0.2s ease;
@@ -212,6 +203,14 @@ body.book-modal-open {
     top: 2.5%;
     left: 51%;
     transform: translateX(-50%);
+    width: min(80vw, 19rem);
+    font-size: clamp(1rem, 1.5vw, 1.45rem);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.hub-note-top.is-dismissed {
+    opacity: 0;
+    transform: translate(-50%, -0.35rem);
 }
 
 .learn-note-top {
@@ -220,20 +219,25 @@ body.book-modal-open {
     transform: translateX(-50%);
 }
 
-.hub-connect-item {
-    top: 78.7%;
-    left: 10.42%;
+.hub-connect-item,
+.hub-learn-item {
+    transform: translate(-50%, -50%);
 }
 
-.hub-connect {
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -50%) rotate(-25deg);
+.hub-connect,
+.hub-learn {
+    position: relative;
+    display: block;
+    top: auto;
+    left: auto;
+    transform: none;
 }
 
-.hub-connect-detail {
-    top: 0.9rem;
-    left: 0.9rem;
+.hub-connect-detail,
+.hub-learn-detail {
+    top: calc(100% + 0.65rem);
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .hub-item:hover .hub-detail {
@@ -249,42 +253,30 @@ body.book-modal-open {
         0 0 28px rgba(255, 255, 255, 0.42);
 }
 
-.hub-learn:hover,
 .hub-play:hover,
 .hub-forum:hover {
     transform: translate(-50%, -50%) scale(1.06);
 }
 
-.hub-connect-item:hover .hub-connect {
-    transform: translate(-50%, -50%) rotate(-25deg) scale(1.06);
+.hub-connect-item:hover .hub-connect,
+.hub-learn-item:hover .hub-learn {
+    transform: scale(1.06);
 }
 
 .hub-story:hover {
-    transform: translate(-50%, -50%) rotate(19deg) scale(1.06);
-}
-
-.hub-learn {
-    top: 75.46%;
-    left: 69.74%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1.06);
 }
 
 .hub-play {
-    top: 64.17%;
-    left: 44.79%;
     transform: translate(-50%, -50%);
 }
 
 .hub-forum {
-    top: 87.04%;
-    left: 38.54%;
     transform: translate(-50%, -50%);
 }
 
 .hub-story {
-    top: 87.31%;
-    left: 84.79%;
-    transform: translate(-50%, -50%) rotate(19deg);
+    transform: translate(-50%, -50%);
 }
 
 .title-svg {
@@ -375,9 +367,41 @@ body.book-modal-open {
     left: 50%;
     display: block;
     max-width: none;
-    transform: translateX(-50%);
-    will-change: width, height;
+    will-change: transform, width, height;
 }
+
+@media (max-width: 700px) {
+    .hub-note {
+        width: min(88vw, 22rem);
+        font-size: clamp(1.15rem, 4.8vw, 1.8rem);
+    }
+
+    .hub-note-top {
+        width: min(78vw, 16rem);
+        font-size: clamp(0.9rem, 3.3vw, 1.1rem);
+    }
+
+    .hub-label {
+        max-width: min(52vw, 10rem);
+        font-size: clamp(1.45rem, 5.8vw, 2.2rem);
+        line-height: 0.95;
+        white-space: normal;
+    }
+
+    .hub-detail {
+        width: min(14rem, 68vw);
+        font-size: clamp(0.95rem, 3.4vw, 1.15rem);
+    }
+
+    .hub-story {
+        transform: translate(-50%, -50%);
+    }
+
+    .hub-story:hover {
+        transform: translate(-50%, -50%) scale(1.06);
+    }
+}
+
 .book-modal {
     position: fixed;
     inset: 0;
@@ -631,7 +655,8 @@ body.book-modal-open {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
+    line-height: 1;
+    padding: 0 0 3px;
 }
 
 .book-nav:hover:not(:disabled) {
@@ -678,31 +703,84 @@ body.book-modal-open {
   color: white;
 }
 
-/* Filter bar */
+/* Filter dropdown */
 .connect-filters {
   position: absolute;
-  top: 14px;
-  left: 52px;
-  right: 24px;
+  top: clamp(14px, 2vw, 24px);
+  right: clamp(16px, 3vw, 32px);
   z-index: 10;
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px 20px;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.filters-toggle {
+  font-family: "Bahianita", sans-serif;
+  font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 5px 14px 5px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  backdrop-filter: blur(6px);
+  transition: color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+}
+
+.filters-toggle:hover,
+.filters-toggle[aria-expanded="true"] {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.filters-caret {
+  font-size: 0.7em;
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.filters-toggle[aria-expanded="true"] .filters-caret {
+  transform: rotate(180deg);
+}
+
+.filters-dropdown {
+  max-width: calc(100vw - 2rem);
+  margin-top: 8px;
+  background: rgba(10, 8, 20, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 14px 20px 16px;
+  backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.filters-dropdown.is-open {
+  pointer-events: auto;
 }
 
 .filter-group {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 10px;
 }
 
 .filter-label {
   font-family: "EB Garamond", serif;
   font-style: italic;
-  font-size: clamp(0.7rem, 0.9vw, 0.85rem);
-  color: rgba(255, 255, 255, 0.28);
+  font-size: clamp(0.75rem, 0.95vw, 0.9rem);
+  color: rgba(255, 255, 255, 0.45);
   white-space: nowrap;
+  min-width: 62px;
 }
 
 .filter-chips {
@@ -756,16 +834,16 @@ body.book-modal-open {
 .axis-x-label {
   font-family: "EB Garamond", serif;
   font-style: italic;
-  font-size: 11px;
-  opacity: 0.55;
+  font-size: 15px;
+  opacity: 0.75;
 }
 
 .axis-y-label {
   font-family: "Inter", sans-serif;
-  font-size: 10px;
-  font-weight: 300;
+  font-size: 13px;
+  font-weight: 400;
   letter-spacing: 0.08em;
-  fill: rgba(255, 255, 255, 0.3);
+  fill: rgba(255, 255, 255, 0.6);
 }
 
 /* Node twinkle */
@@ -783,10 +861,9 @@ body.book-modal-open {
   animation: none;
 }
 
-/* Filtered-out nodes: kill animation so opacity sticks */
+/* Filtered-out nodes: animation killed by JS, opacity driven by GSAP */
 .node-twinkle.node-dimmed {
   animation: none;
-  opacity: 0.06;
   pointer-events: none;
 }
 
@@ -796,13 +873,14 @@ body.book-modal-open {
   right: 24px;
   top: 50%;
   transform: translateY(-50%) translateX(360px);
-  width: 300px;
+  width: 332px;
+  max-width: calc(100vw - 48px);
   max-height: calc(100vh - 100px);
   overflow-y: auto;
-  background: rgba(22, 12, 5, 0.93);
+  background: #1c1a26;
   border: 1px solid rgba(240, 200, 103, 0.14);
   border-radius: 18px;
-  padding: 24px 22px 28px;
+  padding: 26px 24px 30px;
   backdrop-filter: blur(20px);
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 20;
@@ -837,11 +915,10 @@ body.book-modal-open {
 }
 
 .card-prompt {
-  font-family: "EB Garamond", serif;
-  font-style: italic;
-  font-size: 1.05rem;
-  color: rgba(255, 255, 255, 0.28);
-  line-height: 1.5;
+  font-family: "Bahianita", sans-serif;
+  font-size: clamp(1.45rem, 2vw, 1.8rem);
+  color: rgba(255, 255, 255, 0.36);
+  line-height: 1.05;
   margin-top: 4px;
 }
 
@@ -854,38 +931,38 @@ body.book-modal-open {
 }
 
 .card-theme-name {
-  font-family: "Inter", sans-serif;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
+  font-family: "Bahianita", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  margin-bottom: 6px;
+  line-height: 1.05;
   opacity: 0.9;
 }
 
 .card-name {
-  font-family: "EB Garamond", serif;
-  font-size: 1.45rem;
-  font-weight: 500;
-  line-height: 1.2;
+  font-family: "Bahianita", sans-serif;
+  font-size: clamp(1.95rem, 2.8vw, 2.3rem);
+  font-weight: 400;
+  line-height: 0.95;
   color: #fff;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .card-org {
-  font-family: "Inter", sans-serif;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 12px;
-  letter-spacing: 0.02em;
+  font-family: "Bahianita", sans-serif;
+  font-size: 1.35rem;
+  color: rgba(255, 255, 255, 0.58);
+  margin-bottom: 14px;
+  line-height: 1.05;
 }
 
 .card-desc {
-  font-family: "EB Garamond", serif;
-  font-size: 1rem;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.75);
-  margin-bottom: 14px;
+  font-family: "Bahianita", sans-serif;
+  font-size: 1.55rem;
+  line-height: 1.08;
+  color: rgba(255, 255, 255, 0.82);
+  margin-bottom: 16px;
 }
 
 .card-tags {
@@ -896,37 +973,37 @@ body.book-modal-open {
 }
 
 .resource-tag {
-  font-family: "Inter", sans-serif;
-  font-size: 10px;
+  font-family: "Bahianita", sans-serif;
+  font-size: 1.02rem;
   font-weight: 400;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   border: 1px solid;
   border-radius: 999px;
-  padding: 2px 8px;
+  padding: 4px 10px 3px;
+  line-height: 1;
   opacity: 0.85;
 }
 
 .card-eligibility {
-  font-family: "Inter", sans-serif;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.35);
-  line-height: 1.4;
-  margin-bottom: 16px;
-  font-style: italic;
+  font-family: "Bahianita", sans-serif;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.06;
+  margin-bottom: 18px;
 }
 
 .card-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: "Inter", sans-serif;
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-family: "Bahianita", sans-serif;
+  font-size: 1.18rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
   color: #F0C867;
   text-decoration: none;
   border-bottom: 1px solid rgba(240, 200, 103, 0.35);
-  padding-bottom: 2px;
+  padding-bottom: 3px;
   transition: border-color 0.2s, opacity 0.2s;
 }
 
