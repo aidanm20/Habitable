@@ -1,7 +1,7 @@
 import "./style.css";
 import { gsap } from "gsap";
 import { setupCoverParallax } from "./app.js";
-
+import { initConnect } from "./connect.js";
 const BG_SOURCE_SIZE = {
     width: 2360,
     height: 1640,
@@ -236,107 +236,136 @@ function initBook() {
 
     let spreadIndex = 0;
     let isAnimating = false;
+    const totalSpreads = Math.ceil(BOOK_PAGES.length / 2);
 
     bookContainer.innerHTML = `
         <div class="resource-book">
-            <button class="book-nav book-prev" type="button" aria-label="Previous pages">&lsaquo;</button>
-            <div class="book-spread">
-                <article class="book-page book-page-left"></article>
-                <article class="book-page book-page-right"></article>
-                <div class="book-flip-layer" id="flipLayer"></div>
+            <button class="book-nav book-prev" type="button" aria-label="Previous pages">&#x2039;</button>
+            <div class="book-scene">
+                <div class="book-spine"></div>
+                <article class="book-page book-page-left book-page-static"></article>
+                <article class="book-page book-page-right book-page-static"></article>
+                <div class="book-flip-panel" aria-hidden="true">
+                    <div class="book-flip-face book-flip-front"></div>
+                    <div class="book-flip-face book-flip-back"></div>
+                </div>
+                <div class="book-flip-shadow-left"></div>
+                <div class="book-flip-shadow-right"></div>
             </div>
-            <button class="book-nav book-next" type="button" aria-label="Next pages">&rsaquo;</button>
+            <button class="book-nav book-next" type="button" aria-label="Next pages">&#x203a;</button>
         </div>
     `;
 
-    const book = bookContainer.querySelector(".book-spread");
-    const leftPage = bookContainer.querySelector(".book-page-left");
+    const scene     = bookContainer.querySelector(".book-scene");
+    const leftPage  = bookContainer.querySelector(".book-page-left");
     const rightPage = bookContainer.querySelector(".book-page-right");
-    const prevBtn = bookContainer.querySelector(".book-prev");
-    const nextBtn = bookContainer.querySelector(".book-next");
-    const flipLayer = bookContainer.querySelector("#flipLayer");
+    const flipPanel = bookContainer.querySelector(".book-flip-panel");
+    const flipFront = bookContainer.querySelector(".book-flip-front");
+    const flipBack  = bookContainer.querySelector(".book-flip-back");
+    const shadowL   = bookContainer.querySelector(".book-flip-shadow-left");
+    const shadowR   = bookContainer.querySelector(".book-flip-shadow-right");
+    const prevBtn   = bookContainer.querySelector(".book-prev");
+    const nextBtn   = bookContainer.querySelector(".book-next");
 
-    function renderPage(pageEl, pageData, pageNumber) {
-        pageEl.innerHTML = getPageHTML(pageData, pageNumber);
+    const dotsWrap = document.createElement("div");
+    dotsWrap.className = "book-progress";
+    for (let i = 0; i < totalSpreads; i++) {
+        const dot = document.createElement("div");
+        dot.className = "book-progress-dot";
+        dotsWrap.appendChild(dot);
+    }
+    scene.appendChild(dotsWrap);
+
+    function renderPage(el, pageData, pageNum) {
+        el.innerHTML = getPageHTML(pageData, pageNum);
+    }
+
+    function updateDots() {
+        const current = spreadIndex / 2;
+        dotsWrap.querySelectorAll(".book-progress-dot").forEach((d, i) => {
+            d.classList.toggle("is-active", i === current);
+        });
     }
 
     function renderSpread() {
-        renderPage(leftPage, BOOK_PAGES[spreadIndex], spreadIndex + 1);
+        renderPage(leftPage,  BOOK_PAGES[spreadIndex],     spreadIndex + 1);
         renderPage(rightPage, BOOK_PAGES[spreadIndex + 1], spreadIndex + 2);
         prevBtn.disabled = spreadIndex === 0;
         nextBtn.disabled = spreadIndex + 2 >= BOOK_PAGES.length;
+        updateDots();
     }
 
-    function animateForward() {
-        if (isAnimating || spreadIndex + 2 >= BOOK_PAGES.length) {
-            return;
-        }
+    function flip(direction) {
+        if (isAnimating) return;
+        const isForward = direction === "forward";
+        if (isForward && spreadIndex + 2 >= BOOK_PAGES.length) return;
+        if (!isForward && spreadIndex === 0) return;
 
         isAnimating = true;
-        flipLayer.innerHTML = rightPage.innerHTML;
-        flipLayer.classList.add("is-active", "forward");
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
 
-        leftPage.innerHTML = getPageHTML(BOOK_PAGES[spreadIndex + 2], spreadIndex + 3);
+        const nextIdx = isForward ? spreadIndex + 2 : spreadIndex - 2;
 
-        gsap.timeline({
-            onStart: () => {
-                book.classList.add("is-turning");
-            },
+        if (isForward) {
+            renderPage(flipFront, BOOK_PAGES[spreadIndex + 1], spreadIndex + 2);
+            renderPage(flipBack,  BOOK_PAGES[nextIdx],          nextIdx + 1);
+        } else {
+            renderPage(flipFront, BOOK_PAGES[spreadIndex],     spreadIndex + 1);
+            renderPage(flipBack,  BOOK_PAGES[nextIdx + 1],     nextIdx + 2);
+        }
+
+        gsap.set(flipPanel, { rotateY: 0 });
+        flipPanel.classList.remove("flip-forward", "flip-backward", "is-flipping");
+        flipPanel.classList.add(isForward ? "flip-forward" : "flip-backward", "is-flipping");
+
+        const targetShadow = isForward ? shadowL : shadowR;
+        const flipDuration = 0.62;
+
+        const tl = gsap.timeline({
             onComplete: () => {
-                spreadIndex += 2;
-                rightPage.innerHTML = getPageHTML(BOOK_PAGES[spreadIndex + 1], spreadIndex + 2);
-                flipLayer.classList.remove("is-active", "forward");
-                flipLayer.innerHTML = "";
-                book.classList.remove("is-turning");
+                flipPanel.classList.remove("is-flipping", "flip-forward", "flip-backward");
+                gsap.set(flipPanel, { rotateY: 0 });
+                gsap.set([shadowL, shadowR], { opacity: 0 });
                 isAnimating = false;
                 renderSpread();
             },
-        })
-            .to(book, { rotationY: -8, duration: 0.25 }, 0)
-            .to(flipLayer, {
-                rotationY: -180,
-                duration: 0.8,
-                ease: "power2.inOut",
-            }, 0)
-            .to(book, { rotationY: 0, duration: 0.4 }, 0.6);
+        });
+
+        tl.to(flipPanel, {
+            rotateY: isForward ? -180 : 180,
+            duration: flipDuration,
+            ease: "power2.inOut",
+        }, 0);
+
+        tl.call(() => {
+            spreadIndex = nextIdx;
+            renderPage(leftPage,  BOOK_PAGES[spreadIndex],     spreadIndex + 1);
+            renderPage(rightPage, BOOK_PAGES[spreadIndex + 1], spreadIndex + 2);
+            updateDots();
+        }, null, flipDuration / 2);
+
+        tl.fromTo(targetShadow,
+            { opacity: 0 },
+            { opacity: 0.42, duration: flipDuration / 2, ease: "power1.in" },
+            0,
+        );
+        tl.to(targetShadow,
+            { opacity: 0, duration: flipDuration / 2, ease: "power1.out" },
+            flipDuration / 2,
+        );
+
     }
 
-    function animateBackward() {
-        if (isAnimating || spreadIndex === 0) {
-            return;
-        }
-
-        isAnimating = true;
-        flipLayer.innerHTML = leftPage.innerHTML;
-        flipLayer.classList.add("is-active", "backward");
-
-        rightPage.innerHTML = getPageHTML(BOOK_PAGES[spreadIndex - 1], spreadIndex);
-
-        gsap.timeline({
-            onStart: () => {
-                book.classList.add("is-turning");
-            },
-            onComplete: () => {
-                spreadIndex -= 2;
-                leftPage.innerHTML = getPageHTML(BOOK_PAGES[spreadIndex], spreadIndex + 1);
-                flipLayer.classList.remove("is-active", "backward");
-                flipLayer.innerHTML = "";
-                book.classList.remove("is-turning");
-                isAnimating = false;
-                renderSpread();
-            },
-        })
-            .to(book, { rotationY: 8, duration: 0.25 }, 0)
-            .to(flipLayer, {
-                rotationY: 180,
-                duration: 0.8,
-                ease: "power2.inOut",
-            }, 0)
-            .to(book, { rotationY: 0, duration: 0.4 }, 0.6);
+    function onKeyDown(e) {
+        if (!bookModal.classList.contains("is-open")) return;
+        if (e.key === "ArrowRight") flip("forward");
+        if (e.key === "ArrowLeft")  flip("backward");
     }
+    document.addEventListener("keydown", onKeyDown);
 
-    nextBtn.addEventListener("click", animateForward);
-    prevBtn.addEventListener("click", animateBackward);
+    nextBtn.addEventListener("click", () => flip("forward"));
+    prevBtn.addEventListener("click", () => flip("backward"));
     renderSpread();
 }
 
@@ -512,3 +541,7 @@ learnTrigger?.addEventListener("click", () => learnInTl.restart());
 learnBack?.addEventListener("click", () => learnOutTl.restart());
 storyTrigger?.addEventListener("click", () => storyInTl.restart());
 storyBack?.addEventListener("click", () => storyOutTl.restart());
+window.addEventListener("load", () => {
+  startTextDraw();
+  initConnect();
+});

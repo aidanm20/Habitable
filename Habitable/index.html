@@ -36,8 +36,54 @@
       <p class="hub-label hub-story">Story &amp; About Us</p>
     </div>
     <div id="connectOverlay">
-      <button id="connectBack" type="button" aria-label="Back to hub">&#8249;</button>
+  <button id="connectBack" type="button" aria-label="Back to hub">&#8249;</button>
+
+  <section class="connect-shell">
+
+    <div class="connect-filters">
+      <button class="filters-toggle" id="filtersToggle" type="button" aria-expanded="false" aria-controls="filtersDropdown">
+        Filters <span class="filters-caret" aria-hidden="true">▾</span>
+      </button>
+      <div class="filters-dropdown" id="filtersDropdown" aria-hidden="true">
+        <div class="filter-group">
+          <span class="filter-label">Identity</span>
+          <div class="filter-chips">
+            <button class="chip" data-filter="identity" data-value="LGBTQ+">LGBTQ+</button>
+            <button class="chip" data-filter="identity" data-value="immigrant">Immigrant</button>
+            <button class="chip" data-filter="identity" data-value="survivor">Survivor</button>
+            <button class="chip" data-filter="identity" data-value="foster youth">Foster Youth</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Access</span>
+          <div class="filter-chips">
+            <button class="chip" data-filter="access" data-value="online">Online</button>
+            <button class="chip" data-filter="access" data-value="in-person">In-Person</button>
+            <button class="chip" data-filter="access" data-value="immediate help">Immediate</button>
+            <button class="chip" data-filter="access" data-value="referral-based">Referral</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Geography</span>
+          <div class="filter-chips">
+            <button class="chip" data-filter="geo" data-value="national">National</button>
+            <button class="chip" data-filter="geo" data-value="local">Local</button>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div class="connect-map-wrap" id="connectMapWrap">
+      <svg id="connectMap" class="constellation-svg"></svg>
+    </div>
+
+    <aside id="resourceCard" class="resource-card">
+      <button class="card-close" id="cardClose" aria-label="Close">&#215;</button>
+      <p class="card-prompt">Select a resource<br>to learn more.</p>
+    </aside>
+
+  </section>
+</div>
     <div id="learnOverlay">
       <button id="learnBack" type="button" aria-label="Back to hub">&#8249;</button>
       <p class="hub-note learn-note-top">Click on book to learn about our resources</p>

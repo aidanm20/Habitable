@@ -1,0 +1,812 @@
+[
+  {
+    "id": "R001",
+    "slug": "211",
+    "name": "211",
+    "organization": "United Way / 211",
+    "url": "https://www.211.org/",
+    "description": "24/7 service that connects people to local housing, bill, food, health, and crisis resources.",
+    "theme": "Stay",
+    "x": 9,
+    "stage": "Now",
+    "y": 9,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "phone",
+      "online",
+      "immediate help"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "hotline",
+      "directory"
+    ],
+    "eligibilityNotes": "Varies by local provider"
+  },
+  {
+    "id": "R002",
+    "slug": "national-runaway-safeline",
+    "name": "National Runaway Safeline",
+    "organization": "National Runaway Safeline",
+    "url": "https://www.1800runaway.org/",
+    "description": "24/7 crisis support and local referrals for youth in crisis, including runaway and homelessness situations.",
+    "theme": "Stay",
+    "x": 7,
+    "stage": "Now",
+    "y": 7,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "phone",
+      "text",
+      "chat",
+      "immediate help"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "hotline",
+      "crisis support"
+    ],
+    "eligibilityNotes": "Primarily youth and young adults in crisis"
+  },
+  {
+    "id": "R003",
+    "slug": "get-emergency-housing",
+    "name": "Get Emergency Housing",
+    "organization": "USAGov",
+    "url": "https://www.usa.gov/emergency-housing",
+    "description": "Federal landing page for immediate homelessness and short-term housing help, including 211 referrals.",
+    "theme": "Stay",
+    "x": 10,
+    "stage": "Now",
+    "y": 11,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online",
+      "immediate help"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "government program",
+      "directory"
+    ],
+    "eligibilityNotes": "Routes to local programs"
+  },
+  {
+    "id": "R004",
+    "slug": "covenant-house",
+    "name": "Covenant House",
+    "organization": "Covenant House",
+    "url": "https://www.covenanthouse.org/",
+    "description": "Youth homelessness organization offering shelter, food, case management, and supportive services.",
+    "theme": "Stay",
+    "x": 9,
+    "stage": "Now",
+    "y": 9,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "in-person",
+      "online",
+      "immediate help"
+    ],
+    "geography": [
+      "local"
+    ],
+    "resourceType": [
+      "nonprofit",
+      "shelter"
+    ],
+    "eligibilityNotes": "Programs vary by city and age range"
+  },
+  {
+    "id": "R005",
+    "slug": "runaway-and-homeless-youth-program",
+    "name": "Runaway and Homeless Youth Program",
+    "organization": "Administration for Children and Families",
+    "url": "https://acf.gov/fysb/programs/runaway-homeless-youth",
+    "description": "Federal program supporting street outreach, emergency shelters, transitional living, and maternity group homes.",
+    "theme": "Stay",
+    "x": 8,
+    "stage": "Now",
+    "y": 12,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online",
+      "referral-based"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "government program"
+    ],
+    "eligibilityNotes": "Delivered through local grantees"
+  },
+  {
+    "id": "R006",
+    "slug": "the-trevor-project-get-help",
+    "name": "The Trevor Project — Get Help",
+    "organization": "The Trevor Project",
+    "url": "https://www.thetrevorproject.org/get-help/",
+    "description": "24/7 crisis counseling by phone, text, or chat for LGBTQ+ young people.",
+    "theme": "Belong",
+    "x": 71,
+    "stage": "Now",
+    "y": 7,
+    "identityCommunity": [
+      "LGBTQ+"
+    ],
+    "accessMode": [
+      "phone",
+      "text",
+      "chat",
+      "immediate help"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "hotline",
+      "community org"
+    ],
+    "eligibilityNotes": "Focused on LGBTQ+ young people"
+  },
+  {
+    "id": "R007",
+    "slug": "lgbt-national-youth-talkline",
+    "name": "LGBT National Youth Talkline",
+    "organization": "LGBT National Help Center",
+    "url": "https://lgbthotline.org/",
+    "description": "Peer support hotline offering confidential support, information, and local or national LGBTQ+ resources.",
+    "theme": "Belong",
+    "x": 71,
+    "stage": "Now",
+    "y": 7,
+    "identityCommunity": [
+      "LGBTQ+"
+    ],
+    "accessMode": [
+      "phone",
+      "online",
+      "immediate help"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "hotline",
+      "community org"
+    ],
+    "eligibilityNotes": "Youth-focused and general LGBTQ+ lines available"
+  },
+  {
+    "id": "R008",
+    "slug": "one-n-ten-housing-programs",
+    "name": "one·n·ten Housing Programs",
+    "organization": "one·n·ten",
+    "url": "https://onenten.org/lgbtq-programs/housing/",
+    "description": "Arizona-based LGBTQ+ youth housing assistance and supportive services, including the POND housing program.",
+    "theme": "Find",
+    "x": 57,
+    "stage": "Next",
+    "y": 38,
+    "identityCommunity": [
+      "LGBTQ+"
+    ],
+    "accessMode": [
+      "in-person",
+      "referral-based"
+    ],
+    "geography": [
+      "local"
+    ],
+    "resourceType": [
+      "nonprofit",
+      "housing program"
+    ],
+    "eligibilityNotes": "Arizona-focused LGBTQ+ youth and young adults"
+  },
+  {
+    "id": "R009",
+    "slug": "emergency-rental-assistance-program",
+    "name": "Emergency Rental Assistance Program",
+    "organization": "U.S. Department of the Treasury",
+    "url": "https://home.treasury.gov/policy-issues/coronavirus/assistance-for-state-local-and-tribal-governments/emergency-rental-assistance-program",
+    "description": "Federal ERA program page covering rent, rental arrears, utilities, and housing stability services.",
+    "theme": "Afford",
+    "x": 24,
+    "stage": "Next",
+    "y": 38,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online",
+      "referral-based"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "government program"
+    ],
+    "eligibilityNotes": "Availability depends on local program status"
+  },
+  {
+    "id": "R010",
+    "slug": "state-and-local-rental-assistance",
+    "name": "State and Local Rental Assistance",
+    "organization": "National Low Income Housing Coalition",
+    "url": "https://nlihc.org/rental-assistance",
+    "description": "Searchable database of rental and utility assistance programs by state and locality.",
+    "theme": "Afford",
+    "x": 26,
+    "stage": "Next",
+    "y": 40,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "directory",
+      "nonprofit"
+    ],
+    "eligibilityNotes": "Program status varies by location"
+  },
+  {
+    "id": "R011",
+    "slug": "facing-financial-hardship",
+    "name": "Facing Financial Hardship",
+    "organization": "USAGov",
+    "url": "https://www.usa.gov/financial-hardship",
+    "description": "Federal benefits portal covering rent assistance, utility help, SNAP, TANF, and related supports.",
+    "theme": "Afford",
+    "x": 26,
+    "stage": "Next",
+    "y": 40,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "government program",
+      "directory"
+    ],
+    "eligibilityNotes": "Routes to benefit programs and application information"
+  },
+  {
+    "id": "R012",
+    "slug": "fema-housing-assistance",
+    "name": "FEMA Housing Assistance",
+    "organization": "FEMA",
+    "url": "https://www.fema.gov/assistance/individual/housing",
+    "description": "Disaster-related housing help for uninsured losses after a presidentially declared disaster.",
+    "theme": "Afford",
+    "x": 24,
+    "stage": "Now",
+    "y": 12,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online",
+      "phone",
+      "referral-based"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "government program"
+    ],
+    "eligibilityNotes": "Only for eligible disaster survivors"
+  },
+  {
+    "id": "R013",
+    "slug": "foster-youth-to-independence-fyi-vouchers",
+    "name": "Foster Youth to Independence (FYI) Vouchers",
+    "organization": "HUD",
+    "url": "https://www.hud.gov/hud-partners/public-indian-housing-fyi",
+    "description": "Housing Choice Voucher initiative for young adults under 25 who are in or recently left foster care.",
+    "theme": "Afford",
+    "x": 26,
+    "stage": "Grow",
+    "y": 90,
+    "identityCommunity": [
+      "foster youth"
+    ],
+    "accessMode": [
+      "referral-based",
+      "in-person"
+    ],
+    "geography": [
+      "local"
+    ],
+    "resourceType": [
+      "government program",
+      "voucher"
+    ],
+    "eligibilityNotes": "Requires partnership between public housing agencies and child welfare agencies"
+  },
+  {
+    "id": "R014",
+    "slug": "point-source-youth",
+    "name": "Point Source Youth",
+    "organization": "Point Source Youth",
+    "url": "https://www.pointsourceyouth.org/",
+    "description": "Youth homelessness organization focused on direct cash transfers, targeted housing assistance, and prevention.",
+    "theme": "Build",
+    "x": 88,
+    "stage": "Grow",
+    "y": 90,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online",
+      "referral-based"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "nonprofit",
+      "housing innovation"
+    ],
+    "eligibilityNotes": "Programs run through partner communities"
+  },
+  {
+    "id": "R015",
+    "slug": "lawhelp-org",
+    "name": "LawHelp.org",
+    "organization": "LawHelp",
+    "url": "https://www.lawhelp.org/",
+    "description": "Free legal information and legal help finder, including rent and eviction help by state.",
+    "theme": "Keep",
+    "x": 42,
+    "stage": "Next",
+    "y": 40,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "legal aid",
+      "directory"
+    ],
+    "eligibilityNotes": "Free civil legal information and referrals"
+  },
+  {
+    "id": "R016",
+    "slug": "lsc-i-need-legal-help",
+    "name": "LSC — I Need Legal Help",
+    "organization": "Legal Services Corporation",
+    "url": "https://www.lsc.gov/about-lsc/what-legal-aid/i-need-legal-help",
+    "description": "Locator for LSC-funded legal aid organizations serving low-income people in every state and territory.",
+    "theme": "Keep",
+    "x": 42,
+    "stage": "Next",
+    "y": 40,
+    "identityCommunity": [
+      "immigrant",
+      "survivor",
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "legal aid",
+      "directory"
+    ],
+    "eligibilityNotes": "Income-based civil legal aid"
+  },
+  {
+    "id": "R017",
+    "slug": "just-shelter-national-resources",
+    "name": "Just Shelter — National Resources",
+    "organization": "Just Shelter",
+    "url": "https://justshelter.org/national-resources/",
+    "description": "Curated links to organizations working on affordable housing preservation, eviction prevention, and homelessness.",
+    "theme": "Keep",
+    "x": 42,
+    "stage": "Settle",
+    "y": 66,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "directory",
+      "nonprofit"
+    ],
+    "eligibilityNotes": "Best for finding advocacy and service organizations"
+  },
+  {
+    "id": "R018",
+    "slug": "national-tenants-bill-of-rights",
+    "name": "National Tenants Bill of Rights",
+    "organization": "National Housing Law Project",
+    "url": "https://www.nhlp.org/initiatives/the-national-tenants-bill-of-rights/",
+    "description": "Framework outlining seven essential rights that establish a baseline of tenant protections.",
+    "theme": "Keep",
+    "x": 43,
+    "stage": "Settle",
+    "y": 67,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "legal aid",
+      "advocacy"
+    ],
+    "eligibilityNotes": "Advocacy and rights education rather than direct intake"
+  },
+  {
+    "id": "R019",
+    "slug": "public-counsel-housing-justice",
+    "name": "Public Counsel — Housing Justice",
+    "organization": "Public Counsel",
+    "url": "https://publiccounsel.org/issues/housing-justice/",
+    "description": "Los Angeles County housing justice work covering tenant protections, eviction defense, and homelessness prevention.",
+    "theme": "Keep",
+    "x": 41,
+    "stage": "Next",
+    "y": 38,
+    "identityCommunity": [
+      "immigrant",
+      "survivor",
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online",
+      "in-person",
+      "referral-based"
+    ],
+    "geography": [
+      "local"
+    ],
+    "resourceType": [
+      "legal aid",
+      "nonprofit"
+    ],
+    "eligibilityNotes": "Primarily Los Angeles County"
+  },
+  {
+    "id": "R020",
+    "slug": "schoolhouse-connection",
+    "name": "SchoolHouse Connection",
+    "organization": "SchoolHouse Connection",
+    "url": "https://schoolhouseconnection.org/",
+    "description": "Advocacy and practical assistance to overcome homelessness from prenatal to postsecondary pathways.",
+    "theme": "Find",
+    "x": 56,
+    "stage": "Settle",
+    "y": 64,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "nonprofit",
+      "student support"
+    ],
+    "eligibilityNotes": "Strong fit for students experiencing homelessness"
+  },
+  {
+    "id": "R021",
+    "slug": "youth-law-center-housing-resources",
+    "name": "Youth Law Center — Housing Resources",
+    "organization": "Youth Law Center",
+    "url": "https://www.ylc.org/resource/youth-law-center-housing-resources-2020-present/",
+    "description": "Housing resources and advocacy materials focused on current and former foster youth.",
+    "theme": "Find",
+    "x": 59,
+    "stage": "Grow",
+    "y": 91,
+    "identityCommunity": [
+      "foster youth"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "nonprofit",
+      "advocacy"
+    ],
+    "eligibilityNotes": "Especially useful for foster youth systems navigation"
+  },
+  {
+    "id": "R022",
+    "slug": "true-colors-united",
+    "name": "True Colors United",
+    "organization": "True Colors United",
+    "url": "https://truecolorsunited.org/",
+    "description": "Organization implementing solutions to youth homelessness centered on LGBTQ+ young people.",
+    "theme": "Belong",
+    "x": 72,
+    "stage": "Settle",
+    "y": 64,
+    "identityCommunity": [
+      "LGBTQ+"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "nonprofit",
+      "community org"
+    ],
+    "eligibilityNotes": "Strong fit for LGBTQ+ youth homelessness ecosystem"
+  },
+  {
+    "id": "R023",
+    "slug": "centerlink-directory",
+    "name": "CenterLink Directory",
+    "organization": "CenterLink",
+    "url": "https://www.lgbtqcenters.org/LGBTCenters",
+    "description": "Directory of LGBTQ+ community centers that can provide local support, referrals, and affirming space.",
+    "theme": "Belong",
+    "x": 74,
+    "stage": "Settle",
+    "y": 66,
+    "identityCommunity": [
+      "LGBTQ+"
+    ],
+    "accessMode": [
+      "online",
+      "in-person"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "directory",
+      "community org"
+    ],
+    "eligibilityNotes": "Search by state for local centers"
+  },
+  {
+    "id": "R024",
+    "slug": "national-alliance-to-end-homelessness-youth-and-young-adults",
+    "name": "National Alliance to End Homelessness — Youth and Young Adults",
+    "organization": "National Alliance to End Homelessness",
+    "url": "https://endhomelessness.org/resource-by-category/youth-and-young-adults/",
+    "description": "Collection of youth and young adult homelessness policy resources, toolkits, and program information.",
+    "theme": "Build",
+    "x": 91,
+    "stage": "Grow",
+    "y": 91,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "nonprofit",
+      "advocacy"
+    ],
+    "eligibilityNotes": "Useful for ecosystem mapping and program referrals"
+  },
+  {
+    "id": "R025",
+    "slug": "findhelp-org",
+    "name": "findhelp.org",
+    "organization": "Findhelp",
+    "url": "https://www.findhelp.org/",
+    "description": "Zip-code based search engine for nearby housing, money, food, legal, transit, and health support.",
+    "theme": "Find",
+    "x": 58,
+    "stage": "Next",
+    "y": 40,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "national"
+    ],
+    "resourceType": [
+      "directory"
+    ],
+    "eligibilityNotes": "Search by ZIP code for local services"
+  },
+  {
+    "id": "R026",
+    "slug": "gloria-casarez-residence",
+    "name": "Gloria Casarez Residence",
+    "organization": "Project HOME",
+    "url": "https://www.projecthome.org/gloria-casarez-residence",
+    "description": "LGBTQ-friendly supportive housing for young adults ages 18–23 who are homeless, at risk, or aging out of foster care.",
+    "theme": "Find",
+    "x": 57,
+    "stage": "Settle",
+    "y": 64,
+    "identityCommunity": [
+      "LGBTQ+",
+      "foster youth"
+    ],
+    "accessMode": [
+      "in-person",
+      "referral-based"
+    ],
+    "geography": [
+      "local"
+    ],
+    "resourceType": [
+      "housing program",
+      "nonprofit"
+    ],
+    "eligibilityNotes": "Philadelphia; ages 18–23 at entry"
+  },
+  {
+    "id": "R027",
+    "slug": "washington-state-lgbtq-commission-housing",
+    "name": "Washington State LGBTQ Commission — Housing",
+    "organization": "Washington State LGBTQ Commission",
+    "url": "https://lgbtq.wa.gov/housing",
+    "description": "State housing resource page pointing to accepting shelters, anti-discrimination information, and community resources.",
+    "theme": "Find",
+    "x": 59,
+    "stage": "Next",
+    "y": 40,
+    "identityCommunity": [
+      "LGBTQ+",
+      "immigrant",
+      "survivor"
+    ],
+    "accessMode": [
+      "online"
+    ],
+    "geography": [
+      "local"
+    ],
+    "resourceType": [
+      "government program",
+      "directory"
+    ],
+    "eligibilityNotes": "Washington State resources"
+  },
+  {
+    "id": "R028",
+    "slug": "covenant-house-california",
+    "name": "Covenant House California",
+    "organization": "Covenant House California",
+    "url": "https://covenanthousecalifornia.org/",
+    "description": "California youth shelter and support services for young people experiencing homelessness, ages 18–24.",
+    "theme": "Stay",
+    "x": 9,
+    "stage": "Now",
+    "y": 9,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "in-person",
+      "immediate help"
+    ],
+    "geography": [
+      "local"
+    ],
+    "resourceType": [
+      "nonprofit",
+      "shelter"
+    ],
+    "eligibilityNotes": "California; ages 18–24"
+  },
+  {
+    "id": "R029",
+    "slug": "covenant-house-illinois",
+    "name": "Covenant House Illinois",
+    "organization": "Covenant House Illinois",
+    "url": "https://www.covenanthouseil.org/",
+    "description": "Chicago-based housing and support services for young people ages 18–24 experiencing homelessness.",
+    "theme": "Stay",
+    "x": 9,
+    "stage": "Now",
+    "y": 9,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "in-person",
+      "immediate help"
+    ],
+    "geography": [
+      "local"
+    ],
+    "resourceType": [
+      "nonprofit",
+      "shelter"
+    ],
+    "eligibilityNotes": "Illinois; ages 18–24"
+  },
+  {
+    "id": "R030",
+    "slug": "covenant-house-florida",
+    "name": "Covenant House Florida",
+    "organization": "Covenant House Florida",
+    "url": "https://www.covenanthousefl.org/",
+    "description": "Florida youth shelter and continuum of services for young people ages 18–24 facing homelessness.",
+    "theme": "Stay",
+    "x": 9,
+    "stage": "Now",
+    "y": 9,
+    "identityCommunity": [
+      "general Gen Z"
+    ],
+    "accessMode": [
+      "in-person",
+      "immediate help"
+    ],
+    "geography": [
+      "local"
+    ],
+    "resourceType": [
+      "nonprofit",
+      "shelter"
+    ],
+    "eligibilityNotes": "Florida; ages 18–24"
+  }
+]

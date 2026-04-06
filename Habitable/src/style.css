@@ -400,10 +400,10 @@ body.book-modal-open {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: min(1100px, 92vw);
-    height: min(760px, 88vh);
+    width: min(960px, 90vw);
+    height: min(620px, 84vh);
     transform: translate(-50%, -50%);
-    border-radius: 18px;
+    border-radius: 8px;
     overflow: hidden;
     background: rgba(32, 22, 14, 0.92);
     box-shadow: 0 20px 80px rgba(0, 0, 0, 0.45);
@@ -411,17 +411,20 @@ body.book-modal-open {
 
 .book-modal-close {
     position: absolute;
-    top: 14px;
-    right: 14px;
-    z-index: 5;
-    width: 42px;
-    height: 42px;
+    top: 8px;
+    right: 8px;
+    z-index: 25;
+    width: 34px;
+    height: 34px;
     border: 0;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.88);
     color: #2a1b10;
-    font-size: 28px;
+    font-size: 22px;
     line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
 }
 
@@ -434,50 +437,151 @@ body.book-modal-open {
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: 72px 1fr 72px;
+    grid-template-columns: 52px 1fr 52px;
     align-items: center;
-    gap: 16px;
-    padding: 32px;
+    gap: 10px;
+    padding: 12px 10px 38px;
     background:
-        radial-gradient(circle at center, rgba(255,255,255,0.08), transparent 45%),
-        rgba(45, 30, 18, 0.96);
+        radial-gradient(ellipse 70% 60% at 50% 50%, rgba(120,75,30,0.18), transparent 70%),
+        #1e1208;
 }
 
-.book-spread {
+.book-scene {
     position: relative;
     height: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 18px 48px rgba(0,0,0,0.35);
-    perspective: 1800px;
+    perspective: 2000px;
+    perspective-origin: 50% 48%;
+    border-radius: 3px;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.06),
+        0 4px 8px rgba(0,0,0,0.25),
+        0 16px 40px rgba(0,0,0,0.4),
+        0 32px 72px rgba(0,0,0,0.35);
 }
 
-.book-page {
+.book-spine {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    transform: translateX(-50%);
+    z-index: 10;
+    background: linear-gradient(to right,
+        rgba(60,35,15,0.55) 0%,
+        rgba(140,90,40,0.35) 30%,
+        rgba(180,120,55,0.2) 50%,
+        rgba(60,35,15,0.45) 70%,
+        rgba(40,20,8,0.6) 100%);
+    box-shadow: -3px 0 6px rgba(0,0,0,0.25), 3px 0 6px rgba(0,0,0,0.18);
+    pointer-events: none;
+}
+
+.book-page-static {
     background: #f6eddc;
     position: relative;
-    min-width: 0;
+    overflow: hidden;
 }
 
-.book-page-left {
-    border-right: 1px solid rgba(80, 56, 34, 0.18);
+.book-page-left.book-page-static {
+    background: #ede4d0;
+    border-right: 1px solid rgba(120,80,40,0.12);
 }
 
-.book-page-right {
-    border-left: 1px solid rgba(80, 56, 34, 0.1);
+.book-flip-panel {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    transform-style: preserve-3d;
+    z-index: 20;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.book-flip-panel.is-flipping {
+    visibility: visible;
+}
+
+.book-flip-panel.flip-forward {
+    left: 50%;
+    transform-origin: left center;
+}
+
+.book-flip-panel.flip-backward {
+    left: 0;
+    transform-origin: right center;
+}
+
+.book-flip-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    overflow: hidden;
+    background: #f6eddc;
+}
+
+.book-flip-back {
+    transform: rotateY(180deg);
+    background: #ede4d0;
+}
+
+.book-flip-shadow-left,
+.book-flip-shadow-right {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    pointer-events: none;
+    z-index: 15;
+    opacity: 0;
+}
+
+.book-flip-shadow-left {
+    left: 0;
+    background: linear-gradient(to left, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.08) 40%, transparent 100%);
+}
+
+.book-flip-shadow-right {
+    right: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.08) 40%, transparent 100%);
+}
+
+.book-progress {
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 7px;
+    align-items: center;
+}
+
+.book-progress-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.22);
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.book-progress-dot.is-active {
+    background: rgba(255,200,120,0.85);
+    transform: scale(1.35);
 }
 
 .book-page-inner {
     height: 100%;
     overflow: auto;
-    padding: 48px 42px 40px;
+    padding: 52px 46px 44px;
     color: #2d2015;
     font-family: "EB Garamond", serif;
     background:
-        linear-gradient(to bottom, rgba(255,255,255,0.2), transparent 20%),
-        #f6eddc;
+        radial-gradient(ellipse 120% 90% at 50% 0%, rgba(255,255,255,0.22) 0%, transparent 60%),
+        linear-gradient(to bottom, transparent 85%, rgba(80,50,20,0.07) 100%);
 }
 
 .book-page-inner.empty {
@@ -491,32 +595,52 @@ body.book-modal-open {
     margin-bottom: 20px;
 }
 
+.book-page-left .book-page-number {
+    text-align: left;
+}
+
+.book-page-right .book-page-number {
+    text-align: right;
+}
+
 .book-page-inner h2 {
-    font-size: clamp(2rem, 2.4vw, 2.8rem);
-    margin-bottom: 18px;
+    font-size: clamp(1.8rem, 2.4vw, 2.6rem);
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(80,50,25,0.15);
 }
 
 .book-page-inner p {
-    font-size: clamp(1.2rem, 1.4vw, 1.5rem);
-    line-height: 1.5;
+    font-size: clamp(1.1rem, 1.4vw, 1.4rem);
+    line-height: 1.6;
     margin-bottom: 16px;
 }
 
 .book-nav {
-    width: 56px;
-    height: 56px;
-    border: 0;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255,255,255,0.15);
     border-radius: 999px;
-    background: rgba(255,255,255,0.92);
-    color: #2c1d12;
-    font-size: 34px;
-    line-height: 1;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.85);
+    font-size: 28px;
     cursor: pointer;
     justify-self: center;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s ease, transform 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.book-nav:hover:not(:disabled) {
+    background: rgba(255,255,255,0.16);
+    transform: scale(1.06);
 }
 
 .book-nav:disabled {
-    opacity: 0.35;
+    opacity: 0.25;
     cursor: default;
 }
 
@@ -543,42 +667,270 @@ body.book-modal-open {
     text-decoration: none;
 }
 
-.book-flip-layer {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 50%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transform-origin: left center;
-    background: #f5ecd9;
-    z-index: 10;
-    display: none;
-    backface-visibility: hidden;
+
+/* ── Connect Page ─────────────────────────────────────────── */
+
+.connect-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: white;
 }
 
-.book-flip-layer.is-active {
-    display: block;
+/* Filter bar */
+.connect-filters {
+  position: absolute;
+  top: 14px;
+  left: 52px;
+  right: 24px;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 20px;
 }
 
-.book-flip-layer.forward {
-    right: 0;
-    transform-origin: left center;
+.filter-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
 
-.book-flip-layer.backward {
-    left: 0;
-    transform-origin: right center;
+.filter-label {
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  font-size: clamp(0.7rem, 0.9vw, 0.85rem);
+  color: rgba(255, 255, 255, 0.28);
+  white-space: nowrap;
 }
 
-.book-flip-layer::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        to left,
-        rgba(0,0,0,0.25),
-        transparent 40%
-    );
-    pointer-events: none;
+.filter-chips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-family: "Bahianita", sans-serif;
+  font-size: clamp(0.9rem, 1.15vw, 1.15rem);
+  color: rgba(255, 255, 255, 0.4);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1.1;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.5),
+    0 0 22px rgba(255, 255, 255, 0.2);
+}
+
+.chip.active {
+  color: #F0C867;
+  text-shadow:
+    0 0 10px rgba(240, 200, 103, 0.75),
+    0 0 24px rgba(240, 200, 103, 0.35);
+}
+
+/* Constellation map */
+.connect-map-wrap {
+  position: absolute;
+  inset: 0;
+}
+
+.constellation-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* SVG axis labels */
+.axis-x-label {
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  font-size: 11px;
+  opacity: 0.55;
+}
+
+.axis-y-label {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  fill: rgba(255, 255, 255, 0.3);
+}
+
+/* Node twinkle */
+@keyframes twinkle {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.65; }
+}
+
+.node-twinkle {
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+.node-twinkle:hover,
+.node-twinkle.selected {
+  animation: none;
+}
+
+/* Filtered-out nodes: kill animation so opacity sticks */
+.node-twinkle.node-dimmed {
+  animation: none;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+/* Resource card */
+.resource-card {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%) translateX(360px);
+  width: 300px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  background: rgba(22, 12, 5, 0.93);
+  border: 1px solid rgba(240, 200, 103, 0.14);
+  border-radius: 18px;
+  padding: 24px 22px 28px;
+  backdrop-filter: blur(20px);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 20;
+}
+
+.resource-card.is-open {
+  transform: translateY(-50%) translateX(0);
+}
+
+.card-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.card-close:hover {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.card-prompt {
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.28);
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.card-theme-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.card-theme-name {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  opacity: 0.9;
+}
+
+.card-name {
+  font-family: "EB Garamond", serif;
+  font-size: 1.45rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.card-org {
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 12px;
+  letter-spacing: 0.02em;
+}
+
+.card-desc {
+  font-family: "EB Garamond", serif;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 14px;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.resource-tag {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 2px 8px;
+  opacity: 0.85;
+}
+
+.card-eligibility {
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1.4;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #F0C867;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(240, 200, 103, 0.35);
+  padding-bottom: 2px;
+  transition: border-color 0.2s, opacity 0.2s;
+}
+
+.card-link:hover {
+  border-color: rgba(240, 200, 103, 0.8);
+  opacity: 0.85;
 }
