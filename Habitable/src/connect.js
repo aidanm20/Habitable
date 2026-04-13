@@ -78,9 +78,24 @@ export async function initConnect() {
 
   function buildSVG() {
     const { W, H } = getMapDims();
+    if (!W || !H) return; // container not laid out yet — skip
+
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.setAttribute("width", W);
     svg.setAttribute("height", H);
+
+    // Reset card state — SVG elements are recreated so old references are invalid
+    if (selectedGroup) {
+      selectedGroup = null;
+      cardEl.classList.remove("is-open");
+      cardEl.querySelector(".card-body")?.remove();
+      if (!cardEl.querySelector(".card-prompt")) {
+        const prompt = document.createElement("p");
+        prompt.className = "card-prompt";
+        prompt.innerHTML = "Select a resource<br>to learn more.";
+        cardEl.appendChild(prompt);
+      }
+    }
 
     // Clear existing
     while (svg.firstChild) svg.removeChild(svg.firstChild);
@@ -307,12 +322,12 @@ export async function initConnect() {
 
   buildSVG();
 
-  // Rebuild on resize
-  let resizeTimer;
-  window.addEventListener("resize", () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(buildSVG, 150);
-  });
+  // Rebuild when the map container changes size — debounced to let layout settle
+  let roTimer;
+  new ResizeObserver(() => {
+    clearTimeout(roTimer);
+    roTimer = setTimeout(buildSVG, 80);
+  }).observe(mapWrap);
 }
 
 // ─── helpers ───────────────────────────────────────────────────────────────

@@ -25,7 +25,7 @@
     <div id="hubOverlay">
       <p class="hub-note hub-note-top">Hover over text to see details.<br />Click to enter.</p>
       <div class="hub-item hub-connect-item">
-        <p class="hub-label hub-connect">Connect</p>
+        <p class="hub-label hub-connect">Explore</p>
         <p class="hub-detail hub-connect-detail">
           Here you will find a constellation map helping you match with a housing nonprofit tailored to your situation.
         </p>
@@ -37,7 +37,7 @@
         </p>
       </div>
       <p class="hub-label hub-play">Play</p>
-      <p class="hub-label hub-forum">Forum</p>
+      <p class="hub-label hub-forum">Connect</p>
       <p class="hub-label hub-story">Story &amp; About Us</p>
     </div>
     <div id="connectOverlay">
@@ -119,6 +119,38 @@
         target="_blank"
         rel="noopener noreferrer"
       ></a>
+    </div>
+    <div id="forumOverlay">
+      <button id="forumBack" type="button" aria-label="Back to hub">&#8249;</button>
+
+      <!-- Hint text -->
+      <p id="forumHint">Click on the fire to leave a message</p>
+
+      <!-- Transparent hit area positioned over the fire in the zoomed cover scene -->
+      <div id="fireClickZone" title="Click to leave a message"></div>
+
+      <!-- Floating spark particles live here -->
+      <div id="sparksContainer" aria-hidden="true"></div>
+
+      <!-- Rising compose panel -->
+      <div id="composePanel" aria-hidden="true">
+        <p id="composePrompt"></p>
+        <textarea id="composeText" maxlength="200" placeholder="your words..."></textarea>
+        <div id="composeFooter">
+          <input id="composeNickname" type="text" maxlength="30" placeholder="your name (optional)" autocomplete="off" />
+          <button id="composeSubmit" type="button">release ✦</button>
+        </div>
+        <button id="composeClose" type="button" aria-label="Close">&#215;</button>
+      </div>
+
+      <!-- Full message modal -->
+      <div id="messageModal" aria-hidden="true">
+        <div id="messageModalInner">
+          <button id="modalClose" type="button" aria-label="Close">&#215;</button>
+          <p id="modalText"></p>
+          <span id="modalMeta"></span>
+        </div>
+      </div>
     </div>
     <div id="introContent">
       <svg class="title-svg" viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" aria-label="500 Acres">

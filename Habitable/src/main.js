@@ -2,7 +2,7 @@ import "./style.css";
 import { gsap } from "gsap";
 import { projectCoverPoint, setupCoverParallax, subscribeToCoverLayout } from "./app.js";
 import { initConnect } from "./connect.js";
-
+import { initForum, resumeForum, pauseForum } from "./forum.js";
 const BG_SOURCE_SIZE = {
     width: 2360,
     height: 1640,
@@ -182,6 +182,9 @@ const learnBack = document.querySelector("#learnBack");
 const learnBookHotspot = document.querySelector("#learnBookHotspot");
 const storyOverlay = document.querySelector("#storyOverlay");
 const storyBack = document.querySelector("#storyBack");
+const forumOverlay = document.querySelector("#forumOverlay");
+const forumBack = document.querySelector("#forumBack");
+const coverScene = document.querySelector("#coverScene");
 const storyHotspot = document.querySelector("#storyHotspot");
 const aboutHotspot = document.querySelector("#aboutHotspot");
 const bookModal = document.querySelector("#bookModal");
@@ -707,6 +710,61 @@ async function fade() {
     }
 }
 
+// Fire source position in the cover SVG (1920 × 2160) — adjust to fine-tune centering
+const FIRE_SOURCE = { x: 780, y: 1880 };
+const FORUM_SCALE = 1.8;
+let forumActive = false;
+
+function calcForumOrigin() {
+    const firePos = projectCoverPoint(FIRE_SOURCE.x, FIRE_SOURCE.y, 1);
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    return {
+        ox: (cx - firePos.left * FORUM_SCALE) / (1 - FORUM_SCALE),
+        oy: (cy - firePos.top  * FORUM_SCALE) / (1 - FORUM_SCALE),
+    };
+}
+
+// Recalculate transform origin whenever the cover layout changes while forum is open
+subscribeToCoverLayout(() => {
+    if (!forumActive || !coverScene) return;
+    const { ox, oy } = calcForumOrigin();
+    gsap.set(coverScene, { transformOrigin: `${ox}px ${oy}px` });
+});
+
+function enterForum() {
+    if (!coverScene) return;
+    const { ox, oy } = calcForumOrigin();
+    gsap.set(coverScene, { transformOrigin: `${ox}px ${oy}px` });
+    if (hubOverlay) hubOverlay.style.pointerEvents = "none";
+
+    gsap.timeline()
+        .to(hubOverlay, { opacity: 0, duration: 0.4, ease: "power2.out" }, 0)
+        .to(coverScene, { scale: FORUM_SCALE, duration: 1.4, ease: "power2.inOut" }, 0)
+        .to(forumOverlay, { opacity: 1, duration: 0.4, ease: "power2.out" }, 1.0)
+        .call(() => {
+            forumActive = true;
+            if (forumOverlay) forumOverlay.style.pointerEvents = "auto";
+            resumeForum();
+        });
+}
+
+function exitForum() {
+    if (!coverScene) return;
+    forumActive = false;
+    if (forumOverlay) forumOverlay.style.pointerEvents = "none";
+    pauseForum();
+
+    gsap.timeline()
+        .to(forumOverlay, { opacity: 0, duration: 0.3, ease: "power2.in" }, 0)
+        .to(coverScene, { scale: 1, duration: 1.2, ease: "power2.inOut" }, 0.15)
+        .to(hubOverlay, { opacity: 1, duration: 0.5, ease: "power2.out" }, 1.0)
+        .call(() => {
+            gsap.set(coverScene, { clearProps: "transform,transformOrigin" });
+            if (hubOverlay) hubOverlay.style.pointerEvents = "auto";
+        });
+}
+
 introButton?.addEventListener("click", fade);
 connectTrigger?.addEventListener("click", () => connectInTl.restart());
 connectBack?.addEventListener("click", () => connectOutTl.restart());
@@ -714,7 +772,10 @@ learnTrigger?.addEventListener("click", () => learnInTl.restart());
 learnBack?.addEventListener("click", () => learnOutTl.restart());
 storyTrigger?.addEventListener("click", () => storyInTl.restart());
 storyBack?.addEventListener("click", () => storyOutTl.restart());
+forumTrigger?.addEventListener("click", enterForum);
+forumBack?.addEventListener("click", exitForum);
 window.addEventListener("load", () => {
   startTextDraw();
   initConnect();
+  initForum();
 });
