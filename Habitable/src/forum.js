@@ -7,7 +7,7 @@ const PROMPTS = [
   "What would make home feel possible?",
 ];
 
-const MAX_SPARKS = 20;
+const MAX_SPARKS = 8;
 
 let messages = [];
 let promptIndex = 0;
@@ -18,6 +18,8 @@ const activeTimelines = new Set();
 let fireZone, sparksContainer, composePanel, composePrompt, composeText,
     composeNickname, composeSubmit, composeClose, messageModal, modalText,
     modalMeta, modalClose;
+
+let hoveredSpark = null;
 
 function resolveRefs() {
   fireZone        = document.getElementById("fireClickZone");
@@ -109,7 +111,7 @@ function spawnSpark(message, opts = {}) {
   ];
 
   const segDur  = (totalDur * 0.82) / waypoints.length;
-  const overlap = (segDur * 0.35).toFixed(2);
+  const overlap = (segDur * 0.45).toFixed(2);
 
   const tl = gsap.timeline({
     delay,
@@ -131,15 +133,6 @@ function spawnSpark(message, opts = {}) {
   const fadeStart = `>-${rand(2.5, 4).toFixed(1)}`;
   tl.to(el, { opacity: 0, duration: rand(2, 3.5), ease: "power2.in" }, fadeStart);
 
-  // Hover: slow to 8% — barely drifting, never fully stopped
-  el.addEventListener("mouseenter", () => {
-    tl.timeScale(0.08);
-    el.classList.add("spark--hovered");
-  });
-  el.addEventListener("mouseleave", () => {
-    tl.timeScale(1);
-    el.classList.remove("spark--hovered");
-  });
   el.addEventListener("click", (e) => { e.stopPropagation(); openMessageModal(message); });
 }
 
@@ -227,6 +220,35 @@ function closeMessageModal() {
   });
 }
 
+// ─── Hover tracking (document-level, reliable on animating elements) ─────────
+
+function attachHoverTracking() {
+  document.addEventListener("pointermove", (e) => {
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const spark = el?.classList.contains("spark") ? el : el?.closest(".spark");
+
+    if (spark !== hoveredSpark) {
+      if (hoveredSpark) {
+        hoveredSpark._tl?.timeScale(1);
+        hoveredSpark.classList.remove("spark--hovered");
+      }
+      hoveredSpark = spark ?? null;
+      if (hoveredSpark) {
+        hoveredSpark._tl?.timeScale(0);
+        hoveredSpark.classList.add("spark--hovered");
+      }
+    }
+  });
+
+  document.addEventListener("pointerleave", () => {
+    if (hoveredSpark) {
+      hoveredSpark._tl?.timeScale(1);
+      hoveredSpark.classList.remove("spark--hovered");
+      hoveredSpark = null;
+    }
+  });
+}
+
 // ─── Fire glow ───────────────────────────────────────────────────────────────
 
 function attachFireGlow() {
@@ -265,6 +287,7 @@ export async function initForum() {
 
   fireZone?.addEventListener("click", openComposePanel);
   attachFireGlow();
+  attachHoverTracking();
 
   composeSubmit?.addEventListener("click", submitMessage);
   composeClose?.addEventListener("click", closeComposePanel);
@@ -299,6 +322,7 @@ export function pauseForum() {
   stopSpawnLoop();
   activeTimelines.forEach(tl => tl.kill());
   activeTimelines.clear();
+  hoveredSpark = null;
   if (sparksContainer) sparksContainer.innerHTML = "";
   if (composePanelOpen) closeComposePanel();
   if (messageModal?.getAttribute("aria-hidden") === "false") closeMessageModal();

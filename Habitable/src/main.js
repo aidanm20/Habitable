@@ -715,32 +715,36 @@ const FIRE_SOURCE = { x: 780, y: 1880 };
 const FORUM_SCALE = 1.8;
 let forumActive = false;
 
-function calcForumOrigin() {
+// Returns the x/y translation needed so that scaling coverScene by FORUM_SCALE
+// around (0,0) brings the fire to the viewport center.
+// Equivalent to transformOrigin but avoids GSAP's stale-matrix bug on resize.
+function calcForumTranslation() {
     const firePos = projectCoverPoint(FIRE_SOURCE.x, FIRE_SOURCE.y, 1);
     const cx = window.innerWidth / 2;
     const cy = window.innerHeight / 2;
+    // After scale s from (0,0): point (fx,fy) → (fx*s + tx, fy*s + ty) = (cx, cy)
     return {
-        ox: (cx - firePos.left * FORUM_SCALE) / (1 - FORUM_SCALE),
-        oy: (cy - firePos.top  * FORUM_SCALE) / (1 - FORUM_SCALE),
+        tx: cx - firePos.left * FORUM_SCALE,
+        ty: cy - firePos.top  * FORUM_SCALE,
     };
 }
 
-// Recalculate transform origin whenever the cover layout changes while forum is open
+// Reposition instantly whenever the cover layout rebuilds during an active forum session
 subscribeToCoverLayout(() => {
     if (!forumActive || !coverScene) return;
-    const { ox, oy } = calcForumOrigin();
-    gsap.set(coverScene, { transformOrigin: `${ox}px ${oy}px` });
+    const { tx, ty } = calcForumTranslation();
+    gsap.set(coverScene, { transformOrigin: "0px 0px", x: tx, y: ty, scale: FORUM_SCALE });
 });
 
 function enterForum() {
     if (!coverScene) return;
-    const { ox, oy } = calcForumOrigin();
-    gsap.set(coverScene, { transformOrigin: `${ox}px ${oy}px` });
+    const { tx, ty } = calcForumTranslation();
+    gsap.set(coverScene, { transformOrigin: "0px 0px" });
     if (hubOverlay) hubOverlay.style.pointerEvents = "none";
 
     gsap.timeline()
         .to(hubOverlay, { opacity: 0, duration: 0.4, ease: "power2.out" }, 0)
-        .to(coverScene, { scale: FORUM_SCALE, duration: 1.4, ease: "power2.inOut" }, 0)
+        .to(coverScene, { x: tx, y: ty, scale: FORUM_SCALE, duration: 1.4, ease: "power2.inOut" }, 0)
         .to(forumOverlay, { opacity: 1, duration: 0.4, ease: "power2.out" }, 1.0)
         .call(() => {
             forumActive = true;
@@ -757,17 +761,25 @@ function exitForum() {
 
     gsap.timeline()
         .to(forumOverlay, { opacity: 0, duration: 0.3, ease: "power2.in" }, 0)
-        .to(coverScene, { scale: 1, duration: 1.2, ease: "power2.inOut" }, 0.15)
+        .to(coverScene, { x: 0, y: 0, scale: 1, duration: 1.2, ease: "power2.inOut" }, 0.15)
         .to(hubOverlay, { opacity: 1, duration: 0.5, ease: "power2.out" }, 1.0)
         .call(() => {
-            gsap.set(coverScene, { clearProps: "transform,transformOrigin" });
+            gsap.set(coverScene, { clearProps: "transform,transformOrigin,x,y,scale" });
             if (hubOverlay) hubOverlay.style.pointerEvents = "auto";
         });
 }
 
 introButton?.addEventListener("click", fade);
-connectTrigger?.addEventListener("click", () => connectInTl.restart());
-connectBack?.addEventListener("click", () => connectOutTl.restart());
+connectTrigger?.addEventListener("click", () => {
+    connectInTl.restart();
+    document.querySelector("#coverTelescope")?.classList.add("layer-hidden");
+});
+connectBack?.addEventListener("click", () => {
+    connectOutTl.restart();
+    setTimeout(() => {
+        document.querySelector("#coverTelescope")?.classList.remove("layer-hidden");
+    }, 400);
+});
 learnTrigger?.addEventListener("click", () => learnInTl.restart());
 learnBack?.addEventListener("click", () => learnOutTl.restart());
 storyTrigger?.addEventListener("click", () => storyInTl.restart());
