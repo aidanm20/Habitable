@@ -15,8 +15,10 @@ const MAX_SPARKS = 8;
 const FIRE_FRAMES = [fire1Url, fire2Url, fire3Url, fire4Url];
 
 let messages = [];
-let fireAnimInterval = null;
+let fireAnimRaf = null;
 let fireAnimImg = null;
+let fireAnimFrame = 0;
+let fireAnimLastTime = 0;
 let promptIndex = 0;
 let sparksActive = false;
 let spawnInterval = null;
@@ -258,11 +260,21 @@ function attachHoverTracking() {
 
 // ─── Fire animation ──────────────────────────────────────────────────────────
 
+function fireAnimLoop(timestamp) {
+  if (timestamp - fireAnimLastTime >= 120) {
+    fireAnimFrame = (fireAnimFrame + 1) % FIRE_FRAMES.length;
+    fireAnimImg?.setAttribute("href", FIRE_FRAMES[fireAnimFrame]);
+    fireAnimLastTime = timestamp;
+  }
+  fireAnimRaf = requestAnimationFrame(fireAnimLoop);
+}
+
 function startFireAnimation() {
   const coverFire = document.getElementById("coverFire");
   if (!coverFire) return;
-  const svgEl = coverFire.closest("svg");
-  if (!svgEl) return;
+  if (!coverFire.closest("svg")) return;
+
+  stopFireAnimation();
 
   fireAnimImg = document.createElementNS("http://www.w3.org/2000/svg", "image");
   fireAnimImg.setAttribute("x", "0");
@@ -273,16 +285,16 @@ function startFireAnimation() {
   coverFire.insertAdjacentElement("afterend", fireAnimImg);
   coverFire.style.display = "none";
 
-  let frame = 0;
-  fireAnimInterval = setInterval(() => {
-    frame = (frame + 1) % FIRE_FRAMES.length;
-    fireAnimImg.setAttribute("href", FIRE_FRAMES[frame]);
-  }, 120);
+  fireAnimFrame = 0;
+  fireAnimLastTime = 0;
+  fireAnimRaf = requestAnimationFrame(fireAnimLoop);
 }
 
 function stopFireAnimation() {
-  clearInterval(fireAnimInterval);
-  fireAnimInterval = null;
+  if (fireAnimRaf !== null) {
+    cancelAnimationFrame(fireAnimRaf);
+    fireAnimRaf = null;
+  }
   const coverFire = document.getElementById("coverFire");
   if (coverFire) coverFire.style.display = "";
   fireAnimImg?.remove();
