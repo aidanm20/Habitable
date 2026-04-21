@@ -711,7 +711,7 @@ async function fade() {
 }
 
 // Fire source position in the cover SVG (1920 × 2160) — adjust to fine-tune centering
-const FIRE_SOURCE = { x: 780, y: 1880 };
+const FIRE_SOURCE = { x: 780, y: 1700 };
 const FORUM_SCALE = 1.8;
 let forumActive = false;
 
