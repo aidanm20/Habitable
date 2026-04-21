@@ -738,6 +738,7 @@ subscribeToCoverLayout(() => {
 
 function enterForum() {
     if (!coverScene) return;
+    document.querySelector("#coverTelescope")?.classList.add("layer-hidden");
     const { tx, ty } = calcForumTranslation();
     gsap.set(coverScene, { transformOrigin: "0px 0px" });
     if (hubOverlay) hubOverlay.style.pointerEvents = "none";
@@ -755,6 +756,7 @@ function enterForum() {
 
 function exitForum() {
     if (!coverScene) return;
+    document.querySelector("#coverTelescope")?.classList.remove("layer-hidden");
     forumActive = false;
     if (forumOverlay) forumOverlay.style.pointerEvents = "none";
     pauseForum();

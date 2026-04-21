@@ -1,4 +1,8 @@
 import { gsap } from "gsap";
+import fire1Url from './assets/fire/fire1.png';
+import fire2Url from './assets/fire/fire2.png';
+import fire3Url from './assets/fire/fire3.png';
+import fire4Url from './assets/fire/fire4.png';
 
 const PROMPTS = [
   "What does home mean to you?",
@@ -8,8 +12,11 @@ const PROMPTS = [
 ];
 
 const MAX_SPARKS = 8;
+const FIRE_FRAMES = [fire1Url, fire2Url, fire3Url, fire4Url];
 
 let messages = [];
+let fireAnimInterval = null;
+let fireAnimImg = null;
 let promptIndex = 0;
 let sparksActive = false;
 let spawnInterval = null;
@@ -249,6 +256,39 @@ function attachHoverTracking() {
   });
 }
 
+// ─── Fire animation ──────────────────────────────────────────────────────────
+
+function startFireAnimation() {
+  const coverFire = document.getElementById("coverFire");
+  if (!coverFire) return;
+  const svgEl = coverFire.closest("svg");
+  if (!svgEl) return;
+
+  fireAnimImg = document.createElementNS("http://www.w3.org/2000/svg", "image");
+  fireAnimImg.setAttribute("x", "0");
+  fireAnimImg.setAttribute("y", "0");
+  fireAnimImg.setAttribute("width", "1920");
+  fireAnimImg.setAttribute("height", "2160");
+  fireAnimImg.setAttribute("href", FIRE_FRAMES[0]);
+  coverFire.insertAdjacentElement("afterend", fireAnimImg);
+  coverFire.style.display = "none";
+
+  let frame = 0;
+  fireAnimInterval = setInterval(() => {
+    frame = (frame + 1) % FIRE_FRAMES.length;
+    fireAnimImg.setAttribute("href", FIRE_FRAMES[frame]);
+  }, 120);
+}
+
+function stopFireAnimation() {
+  clearInterval(fireAnimInterval);
+  fireAnimInterval = null;
+  const coverFire = document.getElementById("coverFire");
+  if (coverFire) coverFire.style.display = "";
+  fireAnimImg?.remove();
+  fireAnimImg = null;
+}
+
 // ─── Fire glow ───────────────────────────────────────────────────────────────
 
 function attachFireGlow() {
@@ -309,6 +349,7 @@ export async function initForum() {
 }
 
 export function resumeForum() {
+  startFireAnimation();
   sparksActive = true;
   const seed = messages.slice(0, 20);
   seed.forEach((msg, i) => {
@@ -318,6 +359,7 @@ export function resumeForum() {
 }
 
 export function pauseForum() {
+  stopFireAnimation();
   sparksActive = false;
   stopSpawnLoop();
   activeTimelines.forEach(tl => tl.kill());
